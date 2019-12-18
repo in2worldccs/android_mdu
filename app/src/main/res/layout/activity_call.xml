@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="top|center"
+    android:orientation="vertical"
+    android:padding="10dp"
+    tools:context=".ui.CallActivity">
+
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="status : "
+            android:textSize="20dp"/>
+        <TextView
+            android:id="@+id/sipLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Connected "
+            android:textColor="#000"
+            android:textSize="20dp"/>
+    </LinearLayout>
+
+
+    <EditText
+        android:id="@+id/edit_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="example : 900x"
+        android:lines="1"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="call"
+        android:onClick="Call"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Close"
+        android:onClick="Denial"/>
+
+
+    <LinearLayout
+        android:id="@+id/layout_receiver"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Accept"
+            android:onClick="Accept"/>
+
+        <ToggleButton
+            android:layout_height="400dp"
+            android:layout_width="400dp"
+            android:text="@+string/talk"
+            android:id="@+id/pushToTalk"
+
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/btn_record"
+            android:textOff=""
+            android:textOn=""
+            android:layout_marginTop="-20dp" />
+
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

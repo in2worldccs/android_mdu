@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ccs</string>
+    <string name="allow">allow</string>
+    <string name="cancel">cancel</string>
+    <string name="enter_name">Enter Name</string>
+    <string name="enter_password">Enter Password</string>
 </resources>
