@@ -1,4 +1,4 @@
-package com.ibrahem.ccs.ui.fragment;
+package com.in2world.ccs.ui.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ibrahem.ccs.R;
+import com.in2world.ccs.R;
 
 public class GroupsFragment extends Fragment {
 

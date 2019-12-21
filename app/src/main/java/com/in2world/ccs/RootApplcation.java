@@ -1,8 +1,8 @@
-package com.ibrahem.ccs;
+package com.in2world.ccs;
 
 import android.app.Application;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+
+import com.in2world.ccs.Database.SaveData;
 
 public class RootApplcation extends Application {
 
@@ -10,6 +10,7 @@ public class RootApplcation extends Application {
     public void onCreate() {
         super.onCreate();
 
+        SaveData.init(this);
 
     }
 }

@@ -1,4 +1,4 @@
-package com.ibrahem.ccs.helper;
+package com.in2world.ccs.helper;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -19,14 +19,14 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
-import com.ibrahem.ccs.ui.MainActivity;
-import com.ibrahem.ccs.R;
+import com.in2world.ccs.ui.MainActivity;
+import com.in2world.ccs.R;
 
 import java.util.Random;
 
 
 /**
- * Created by ibrahem on 9/10/2017.
+ * Created by in2world on 9/10/2017.
  */
 
 public class NotificationHelper {

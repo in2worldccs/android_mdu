@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.ibrahem.ccs.tools;
+package com.in2world.ccs.tools;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
-import com.ibrahem.ccs.R;
+import com.in2world.ccs.R;
 
 
 public class SipSettings extends PreferenceActivity {

@@ -1,4 +1,4 @@
-package com.ibrahem.ccs.helper;
+package com.in2world.ccs.helper;
 
 import android.Manifest;
 import android.app.Activity;
@@ -17,11 +17,11 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 
-import com.ibrahem.ccs.R;
+import com.in2world.ccs.R;
 
 
 /**
- * Created by ibrahem on 10/20/2018.
+ * Created by in2world on 10/20/2018.
  */
 public class PermissionHelper {
 
@@ -30,29 +30,27 @@ public class PermissionHelper {
     // to handel permissiom Code
 
     public static final int CODE_PERMISSION_READ_PHONE_STATE = 11;
-    public static final int CODE_PERMISSION_CAMERA =22;
+    public static final int USE_SIP =22;
     public static final int CODE_PERMISSION_RECORD_AUDIO = 33;
-    public static final int CODE_PERMISSION_READ_SMS = 44;
-    public static final int CODE_PERMISSION_READ_CALL_LOG = 55;
-    public final static int CODE_OVERLAY_PERMISSION = 66;
-    public final static int CODE_UsageStats_PERMISSION = 77;
+    public final static int CODE_PERMISSION = 77;
+    public final static int CODE_UsageStats_PERMISSION = 88;
 
 
     // to handel permissiom v6
     public static final String PERMISSION_READ_PHONE_STATE = Manifest.permission.READ_PHONE_STATE;
-    public static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
+    public static final String PERMISSION_USE_SIP = Manifest.permission.USE_SIP;
     public static final String PERMISSION_RECORD_AUDIO = Manifest.permission.RECORD_AUDIO;
-    public static final String PERMISSION_READ_SMS = Manifest.permission.READ_SMS;
     public static final String PERMISSION_READ_CALL_LOG = Manifest.permission.READ_CALL_LOG;
 
     public static final String[] PERMISSIONS_LIST = {
             PERMISSION_READ_PHONE_STATE,
-            PERMISSION_CAMERA,
+            PERMISSION_USE_SIP,
             PERMISSION_RECORD_AUDIO,
             PERMISSION_READ_CALL_LOG
     };
     public static final String[] PERMISSIONS_LIST_AUDIO = {
-            PERMISSION_RECORD_AUDIO
+            PERMISSION_RECORD_AUDIO,
+            PERMISSION_USE_SIP
     };
 
     public static boolean checkAllPermission(Activity context, String[] permissions, final int requestCode) {

@@ -1,11 +1,11 @@
-package com.ibrahem.ccs.helper;
+package com.in2world.ccs.helper;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 /**
- * Created by ibrahem on 9/16/2018.
+ * Created by in2world on 9/16/2018.
  */
 
 public class NetworkHelper {

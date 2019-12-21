@@ -1,4 +1,4 @@
-package com.ibrahem.ccs.receiver;
+package com.in2world.ccs.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.net.sip.SipAudioCall;
 import android.net.sip.SipProfile;
 
-import com.ibrahem.ccs.ui.CallActivity;
+import com.in2world.ccs.ui.CallActivity;
 
 public class IncomingCallReceiver extends BroadcastReceiver {
     /**
@@ -34,12 +34,13 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             CallActivity wtActivity = (CallActivity) context;
 
           incomingCall = wtActivity.manager.takeAudioCall(intent, listener);
-            incomingCall.answerCall(30);
-            incomingCall.startAudio();
-            incomingCall.setSpeakerMode(true);
+          incomingCall.answerCall(30);
+          incomingCall.startAudio();
+          incomingCall.setSpeakerMode(true);
             if(incomingCall.isMuted()) {
                 incomingCall.toggleMute();
             }
+              incomingCall.toggleMute();
 
             wtActivity.call = incomingCall;
 

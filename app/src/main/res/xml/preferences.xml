@@ -14,12 +14,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
  -->
-
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <EditTextPreference
         android:name="SIP Username"
         android:summary="Username for your SIP Account"
-        android:defaultValue="9005"
+        android:defaultValue="8002"
         android:title="Enter Username"
         android:key="namePref" />
     <EditTextPreference
@@ -31,7 +30,7 @@
     <EditTextPreference
         android:name="SIP Password"
         android:summary="Password for your SIP Account"
-        android:defaultValue="9005"
+        android:defaultValue="8002"
         android:title="Enter Password"
         android:key="passPref"
         android:password="true" />
