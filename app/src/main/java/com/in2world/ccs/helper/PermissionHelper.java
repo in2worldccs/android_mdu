@@ -26,7 +26,7 @@ import com.in2world.ccs.R;
 public class PermissionHelper {
 
 
-
+    PermissionHelper permissionHelper;
     // to handel permissiom Code
 
     public static final int CODE_PERMISSION_READ_PHONE_STATE = 11;

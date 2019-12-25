@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by in2world on 5/18/2018.
+ * Created by ibrahem ayyd on 5/18/2017.
  */
 
 public class SaveData {
@@ -52,57 +52,68 @@ public class SaveData {
     }
 
     public void saveInt(String key, int value) {
+        Log.d(TAG, "saveInt: key " + key + " value " + value);
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putInt(key, value);
         editor.apply();
     }
 
     public int getInt(String key) {
+        Log.d(TAG, "getInt: key " + key);
         return this.isKeyExists(key) ? mSharedPreferences.getInt(key, 0) : 0;
     }
 
     public void saveBoolean(String key, boolean value) {
+        Log.d(TAG, "saveBoolean: key " + key + " value " + value);
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putBoolean(key, value);
         editor.apply();
     }
 
     public boolean getBoolean(String key) {
+        Log.d(TAG, "getBoolean: key " + key);
         return this.isKeyExists(key) && mSharedPreferences.getBoolean(key, false);
     }
 
     public void saveFloat(String key, float value) {
+        Log.d(TAG, "saveFloat: key " + key + " value " + value);
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putFloat(key, value);
         editor.apply();
     }
 
     public float getFloat(String key) {
+        Log.d(TAG, "getFloat: key " + key);
         return this.isKeyExists(key) ? mSharedPreferences.getFloat(key, 0.0F) : 0.0F;
     }
 
     public void saveLong(String key, long value) {
+        Log.d(TAG, "saveLong: key " + key + " value " + value);
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putLong(key, value);
         editor.apply();
     }
 
     public long getLong(String key) {
+        Log.d(TAG, "getLong: key " + key);
         return this.isKeyExists(key) ? mSharedPreferences.getLong(key, 0L) : 0L;
     }
 
     public void saveString(String key, String value) {
+        Log.d(TAG, "saveString: key " + key + " value " + value);
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putString(key, value);
         editor.apply();
     }
 
     public String getString(String key) {
+        Log.d(TAG, "getString: key " + key);
         return this.isKeyExists(key) ? mSharedPreferences.getString(key, (String) null) : null;
     }
 
     public <T> void saveObject(String key, T object) {
         String objectString = (new Gson()).toJson(object);
+        Log.d(TAG, "saveObject: key " + key + " value " + objectString);
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putString(key, objectString);
         editor.apply();
@@ -121,6 +132,7 @@ public class SaveData {
 
     public <T> void saveObjectsList(String key, List<T> objectList) {
         String objectString = (new Gson()).toJson(objectList);
+        Log.d(TAG, "saveObjectsList: key " + key + " value " + objectString);
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putString(key, objectString);
         editor.apply();
@@ -129,7 +141,7 @@ public class SaveData {
     public <T> List getObjectsList(String key, Class<T> classType) {
         if (this.isKeyExists(key)) {
             String objectString = mSharedPreferences.getString(key, (String) null);
-            Log.d(TAG, "getObjectsList : json " + objectString);
+            Log.d(TAG, "getObjectsList : key  " + key + "  json " + objectString);
             if (ValidationHelper.validString(objectString)) {
                 return fromJson(objectString, classType);
             }
@@ -140,6 +152,7 @@ public class SaveData {
 
 
     public void clearSession() {
+        Log.d(TAG, "clearSession: ");
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.clear();
         editor.apply();
@@ -147,6 +160,7 @@ public class SaveData {
 
     public boolean deleteValue(String key) {
         if (this.isKeyExists(key)) {
+            Log.d(TAG, "deleteValue: key "+key);
             SharedPreferences.Editor editor = mSharedPreferences.edit();
             editor.remove(key);
             editor.apply();
@@ -158,16 +172,17 @@ public class SaveData {
 
     private static void validateInitialization() {
         if (mSharedPreferences == null) {
-            throw new IbrahemException("DataSave Class must be initialized inside your application class by calling DataSave.init(getApplicationContext)");
+            throw new SaveDataException("DataSave Class must be initialized inside your application class by calling DataSave.init(getApplicationContext)");
         }
     }
 
     public boolean isKeyExists(String key) {
         Map<String, ?> map = mSharedPreferences.getAll();
         if (map.containsKey(key)) {
+            Log.w(TAG, "isKeyExists: key "+key);
             return true;
         } else {
-            Log.e("DataSave", "No element founded in sharedPrefs with the key " + key);
+            Log.e(TAG, "isKeyExists: No element founded in sharedPrefs with the key " + key);
             return false;
         }
     }
@@ -194,8 +209,8 @@ public class SaveData {
         return list;
     }
 
-    public static class IbrahemException extends RuntimeException {
-        public IbrahemException(String message) {
+    public static class SaveDataException extends RuntimeException {
+        public SaveDataException(String message) {
             super(message);
         }
     }

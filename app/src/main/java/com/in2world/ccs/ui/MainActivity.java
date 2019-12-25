@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -17,6 +18,10 @@ import com.in2world.ccs.ui.fragment.UsersFragment;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.in2world.ccs.tools.GlobalData.CALL_NUMBER;
+import static com.in2world.ccs.tools.GlobalData.CALL_STATUS;
+import static com.in2world.ccs.tools.GlobalData.OUT_COMING;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -124,6 +129,9 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
+
+
 
 
 }

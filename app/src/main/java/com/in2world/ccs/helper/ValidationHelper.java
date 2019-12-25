@@ -2,7 +2,13 @@ package com.in2world.ccs.helper;
 
 import java.util.List;
 
+
+/**
+ * Created by ibrahem ayyd on 8/12/2016.
+ */
 public class ValidationHelper {
+
+    ValidationHelper validationHelper;
 
     /**
      * @param string cheke text

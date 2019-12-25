@@ -2,6 +2,7 @@ package com.in2world.ccs.ui;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -33,7 +34,9 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.in2world.ccs.R;
+import com.in2world.ccs.RootApplcation;
 import com.in2world.ccs.helper.ValidationHelper;
+import com.in2world.ccs.tools.GlobalData;
 
 import java.text.ParseException;
 
@@ -42,12 +45,20 @@ import static com.in2world.ccs.tools.GlobalData.CALL_ADDRESS;
 import static com.in2world.ccs.tools.GlobalData.CLOSE;
 import static com.in2world.ccs.tools.GlobalData.CONNECTED;
 import static com.in2world.ccs.tools.GlobalData.HANG_UP;
+import static com.in2world.ccs.tools.GlobalData.IN_COMING;
+import static com.in2world.ccs.tools.GlobalData.IncomingCallIntent;
+import static com.in2world.ccs.tools.GlobalData.OUT_COMING;
 import static com.in2world.ccs.tools.GlobalData.READY;
 import static com.in2world.ccs.tools.GlobalData.RINGING;
 import static com.in2world.ccs.tools.GlobalData.SIP_domain;
 import static com.in2world.ccs.tools.GlobalData.SIP_password;
 import static com.in2world.ccs.tools.GlobalData.SIP_username;
 import static com.in2world.ccs.tools.GlobalData.UPDATE_SETTINGS_DIALOG;
+import static com.in2world.ccs.tools.GlobalData.SIP_Manager;
+import static com.in2world.ccs.tools.GlobalData.SIP_Audio_Call;
+import static com.in2world.ccs.tools.GlobalData.SIP_Profile;
+import static com.in2world.ccs.tools.GlobalData.CALL_STATUS;
+import static com.in2world.ccs.tools.GlobalData.CALL_NUMBER;
 import static com.in2world.ccs.tools.SipErrorCode.getErrorMessage;
 
 public class CallActivity extends AppCompatActivity implements View.OnTouchListener {
@@ -59,10 +70,14 @@ public class CallActivity extends AppCompatActivity implements View.OnTouchListe
 
 
     public String sipAddress = null;
+    private ConstraintLayout layConstraint;
+    private Button answer;
+    private Button hangup;
+    private Button close;
+    private TextView callInfo;
+    private TextView callName;
 
-    public SipManager manager = null;
-    public SipProfile me = null;
-    public SipAudioCall call = null;
+    //public SipAudioCall call = null;
     // public IncomingCallReceiver callReceiver;
     private TextView sipLabel;
     private Button btnCall, btnClose;
@@ -76,6 +91,13 @@ public class CallActivity extends AppCompatActivity implements View.OnTouchListe
         public void onReceive(final Context context, Intent intent) {
             Log.d(TAG, "onReceive: ");
             try {
+
+
+                //IncomingCallIntent =  intent;
+                //CALL_STATUS = IN_COMING;
+                //startActivity(new Intent(CallActivity.this,DialerActivity.class));
+
+                layConstraint.setVisibility(View.VISIBLE);
 
                SipAudioCall.Listener listener = new SipAudioCall.Listener() {
                     @Override
@@ -98,7 +120,7 @@ public class CallActivity extends AppCompatActivity implements View.OnTouchListe
                 callStatus = true;
 
                 Toast.makeText(context, "incomingCallReceiver", Toast.LENGTH_SHORT).show();
-                incomingCall = manager.takeAudioCall(intent,new SipAudioCall.Listener() {
+                incomingCall = SIP_Manager.takeAudioCall(intent,new SipAudioCall.Listener() {
                     @Override
                     public void onRinging(SipAudioCall call, SipProfile caller) {
                         try {
@@ -135,8 +157,11 @@ public class CallActivity extends AppCompatActivity implements View.OnTouchListe
                         Log.d(TAG, "onCalling: ");
                     }
                 });
-                call = incomingCall;
-                updateStatus(call.getPeerProfile().getDisplayName() + " Ringing");
+
+
+                CALL_STATUS = IN_COMING;
+                SIP_Audio_Call = incomingCall;
+                updateStatus(SIP_Audio_Call.getPeerProfile().getDisplayName() + " Ringing");
                 updateLayout(RINGING);
             } catch (Exception e) {
                 if (incomingCall != null) {
@@ -148,6 +173,15 @@ public class CallActivity extends AppCompatActivity implements View.OnTouchListe
 
     private void initView() {
 
+
+
+
+        layConstraint =  findViewById(R.id.lay_constraint);
+        answer = (Button) findViewById(R.id.answer);
+        hangup = (Button) findViewById(R.id.hangup);
+        close = (Button) findViewById(R.id.close);
+        callInfo = (TextView) findViewById(R.id.callInfo);
+        callName = (TextView) findViewById(R.id.callName);
         btnCall = findViewById(R.id.btn_call);
         btnClose = findViewById(R.id.btn_close);
         sipLabel = findViewById(R.id.sipLabel);
@@ -172,33 +206,10 @@ public class CallActivity extends AppCompatActivity implements View.OnTouchListe
 
     private void init() {
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        // username = prefs.getString("namePref", "");
-        //domain = prefs.getString("domainPref", "");
-        //password = prefs.getString("passPref", "");
-
-        username = SIP_username;
-        domain = SIP_domain;
-        password = SIP_password;
-
-        Log.d(TAG, "init: username " + username);
-        Log.d(TAG, "init: domain " + domain);
-        Log.d(TAG, "init: password " + password);
-
-        // Set up the intent filter.  This will be used to fire an
-        // IncomingCallReceiver when someone calls the SIP address used by this
-        // application.
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("android.SipDemo.INCOMING_CALL");
-        // callReceiver = new IncomingCallReceiver();
-        this.registerReceiver(incomingCallReceiver, filter);
-
+        updateStatus(RootApplcation.getSipStatus());
         // "Push to talk" can be a serious pain when the screen keeps turning off.
         // Let's prevent that.
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        initializeManager();
     }
 
     @Override
@@ -206,106 +217,22 @@ public class CallActivity extends AppCompatActivity implements View.OnTouchListe
         super.onStart();
         // When we get back from the preference setting Activity, assume
         // settings have changed, and re-login with new auth info.
-        initializeManager();
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (call != null) {
-            call.close();
-        }
-
-        closeLocalProfile();
-
-        if (incomingCallReceiver != null) {
-            this.unregisterReceiver(incomingCallReceiver);
-        }
-    }
-
-    public void initializeManager() {
-        if (manager == null) {
-            manager = SipManager.newInstance(this);
-        }
-        initializeLocalProfile();
-    }
-
-    /**
-     * Logs you into your SIP provider, registering this device as the location to
-     * send SIP calls to for your SIP address.
-     */
-    public void initializeLocalProfile() {
-        if (manager == null) {
-            return;
-        }
-
-        if (me != null) {
-            closeLocalProfile();
-        }
-
-        if (username.length() == 0 || domain.length() == 0 || password.length() == 0) {
-            showDialog(UPDATE_SETTINGS_DIALOG);
-            return;
-        }
-
-        try {
-            SipProfile.Builder builder = new SipProfile.Builder(username, domain);
-            builder.setPassword(password);
-            me = builder.build();
+//
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        if (SIP_Audio_Call != null) {
+//            SIP_Audio_Call.close();
+//        }
+//        if (incomingCallReceiver != null) {
+//            this.unregisterReceiver(incomingCallReceiver);
+//        }
+//    }
 
 
 
-            Intent i = new Intent();
-            i.setAction("android.SipDemo.INCOMING_CALL");
-            PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, Intent.FILL_IN_DATA);
-            manager.open(me, pi, null);
 
-            // This listener must be added AFTER manager.open is called,
-            // Otherwise the methods aren't guaranteed to fire.
-
-
-            Log.d(TAG, "initializeLocalProfile: manager " + (manager != null));
-            manager.setRegistrationListener(me.getUriString(), new SipRegistrationListener() {
-                public void onRegistering(String localProfileUri) {
-                    updateStatus("Registering with SIP Server...");
-                }
-
-                public void onRegistrationDone(String localProfileUri, long expiryTime) {
-                    updateStatus("Ready");
-                    updateLayout(READY);
-                }
-
-                public void onRegistrationFailed(String localProfileUri, int errorCode,
-                                                 String errorMessage) {
-                    Log.w(TAG, "onRegistrationFailed: localProfileUri " + localProfileUri);
-                    Log.w(TAG, "onRegistrationFailed: errorCode " + errorCode);
-                    Log.w(TAG, "onRegistrationFailed: errorMessage " + errorMessage);
-                    updateStatus("Registration failed. "+getErrorMessage(errorCode));
-                }
-            });
-        } catch (ParseException pe) {
-            updateStatus("Connection Error.");
-        } catch (SipException se) {
-            updateStatus("Connection error.");
-        }
-    }
-
-    /**
-     * Closes out your local profile, freeing associated objects into memory
-     * and unregistering your device from the server.
-     */
-    public void closeLocalProfile() {
-        if (manager == null) {
-            return;
-        }
-        try {
-            if (me != null) {
-                manager.close(me.getUriString());
-            }
-        } catch (Exception ee) {
-            Log.d(TAG + "/onDestroy", "Failed to close local profile.", ee);
-        }
-    }
 
     /**
      * Make an outgoing call.
@@ -314,26 +241,10 @@ public class CallActivity extends AppCompatActivity implements View.OnTouchListe
 
         updateStatus(sipAddress);
 
-        try {
+            CALL_STATUS = OUT_COMING;
+            CALL_NUMBER = sipAddress;
+            startActivity(new Intent(CallActivity.this,DialerActivity.class));
 
-            updateLayout(CALLING);
-
-            call = manager.makeAudioCall(me.getUriString(), sipAddress + "@" + domain, sipListener, 30);
-
-        } catch (Exception e) {
-            Log.i(TAG, "initiateCall: Error when trying to close manager. " + e);
-            if (me != null) {
-                try {
-                    manager.close(me.getUriString());
-                } catch (Exception ee) {
-                    Log.i(TAG, "initiateCall: Error when trying to close manager. ", ee);
-                    ee.printStackTrace();
-                }
-            }
-            if (call != null) {
-                call.close();
-            }
-        }
     }
 
     /**
@@ -428,13 +339,13 @@ public class CallActivity extends AppCompatActivity implements View.OnTouchListe
     public boolean onTouch(View v, MotionEvent event) {
 
         Log.d(TAG, "onTouch: ");
-        if (call == null) {
+        if (SIP_Audio_Call == null) {
             return false;
-        } else if (event.getAction() == MotionEvent.ACTION_DOWN && call != null && call.isMuted()) {
-            call.toggleMute();
+        } else if (event.getAction() == MotionEvent.ACTION_DOWN && SIP_Audio_Call != null && SIP_Audio_Call.isMuted()) {
+            SIP_Audio_Call.toggleMute();
             Toast.makeText(this, "ACTION_DOWN", Toast.LENGTH_SHORT).show();
-        } else if (event.getAction() == MotionEvent.ACTION_UP && !call.isMuted()) {
-            call.toggleMute();
+        } else if (event.getAction() == MotionEvent.ACTION_UP && !SIP_Audio_Call.isMuted()) {
+            SIP_Audio_Call.toggleMute();
             Toast.makeText(this, "ACTION_UP", Toast.LENGTH_SHORT).show();
         }
         return false;
@@ -523,6 +434,7 @@ public class CallActivity extends AppCompatActivity implements View.OnTouchListe
         if (!ValidationHelper.validString(sipAddress)) {
             Toast.makeText(this, "enter numberPhone", Toast.LENGTH_SHORT).show();
         } else {
+
             editName.setText("");
             initiateCall();
         }
@@ -545,8 +457,8 @@ public class CallActivity extends AppCompatActivity implements View.OnTouchListe
             return;
         }
 
-        if (callAction == CONNECTED || (call != null && call.isInCall())) {
-            call.close();
+        if (callAction == CONNECTED || (SIP_Audio_Call != null && SIP_Audio_Call.isInCall())) {
+            SIP_Audio_Call.close();
 
             updateLayout(CLOSE);
             return;
@@ -554,8 +466,8 @@ public class CallActivity extends AppCompatActivity implements View.OnTouchListe
 
         if (callAction == CALLING) {
             //close calling
-            if (call != null) {
-                call.endCall();
+            if (SIP_Audio_Call != null) {
+                SIP_Audio_Call.endCall();
             }
             updateLayout(CLOSE);
             updateStatus("Ready");

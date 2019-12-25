@@ -31,6 +31,7 @@ import java.util.Random;
 
 public class NotificationHelper {
 
+    NotificationHelper notificationHelper;
     private static int NOTIFICATION_ID = 1;
     /**
      * This pending intent id is used to uniquely reference the pending intent

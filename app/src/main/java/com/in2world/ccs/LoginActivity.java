@@ -16,7 +16,11 @@ import com.in2world.ccs.helper.PermissionHelper;
 import com.in2world.ccs.helper.ValidationHelper;
 import com.in2world.ccs.tools.GlobalData;
 import com.in2world.ccs.ui.CallActivity;
+import com.in2world.ccs.ui.MainActivity;
 import com.in2world.ccs.ui.SipSettingsActivity;
+
+import static com.in2world.ccs.tools.GlobalData.*;
+
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -27,6 +31,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private String name, password = "";
 
+    SipSettingsActivity sipSettingsActivity;
+    MainActivity mainActivity = new MainActivity();
     private void initView() {
 
         editName = findViewById(R.id.edit_name);
@@ -59,44 +65,20 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if (!ValidationHelper.validString(password)) {
-            editName.setError(getResources().getString(R.string.enter_password));
+            editPass.setError(getResources().getString(R.string.enter_password));
             return;
         }
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        username = prefs.getString("namePref", "");
-        domain = prefs.getString("domainPref", "");
-        password1 = prefs.getString("passPref", "");
-
-
-        if (SaveData.getInstance().isKeyExists(GlobalData.KEY_SIP_username)) {
-            GlobalData.SIP_username = SaveData.getInstance().getString(GlobalData.KEY_SIP_username);
-        } else {
+        if (!checkMyData()) {
             updatePreferences();
             return;
         }
-
-        if (SaveData.getInstance().isKeyExists(GlobalData.KEY_SIP_domain)) {
-            GlobalData.SIP_domain = SaveData.getInstance().getString(GlobalData.KEY_SIP_domain);
-        } else {
-            updatePreferences();
-            return;
-        }
-
-        if (SaveData.getInstance().isKeyExists(GlobalData.KEY_SIP_password)) {
-            GlobalData.SIP_password = SaveData.getInstance().getString(GlobalData.KEY_SIP_password);
-        } else {
-            updatePreferences();
-            return;
-        }
-
 
         if (!checkPermission())
             return;
 
-
-        startActivity(new Intent(this, CallActivity.class));
-
+        RootApplcation.getmRootApplcation().init(this);
+        startActivity(new Intent(this, MainActivity.class));
     }
 
     public void updatePreferences() {
@@ -106,25 +88,29 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    private boolean checkPermission(){
+    private boolean checkPermission() {
 
-        if (!PermissionHelper.isPermissionGranted(this,PermissionHelper.PERMISSION_RECORD_AUDIO)
-             && !PermissionHelper.isPermissionGranted(this,PermissionHelper.PERMISSION_RECORD_AUDIO))
+        if (!PermissionHelper.isPermissionGranted(this, PermissionHelper.PERMISSION_RECORD_AUDIO)
+                && !PermissionHelper.isPermissionGranted(this, PermissionHelper.PERMISSION_RECORD_AUDIO))
             return true;
 
-        PermissionHelper.checkAllPermission(this,PermissionHelper.PERMISSIONS_LIST_AUDIO,PermissionHelper.CODE_PERMISSION);
+        PermissionHelper.checkAllPermission(this, PermissionHelper.PERMISSIONS_LIST_AUDIO, PermissionHelper.CODE_PERMISSION);
         return false;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PermissionHelper.CODE_PERMISSION){
-            if (!PermissionHelper.isPermissionGranted(this,PermissionHelper.PERMISSION_RECORD_AUDIO)
-                    && !PermissionHelper.isPermissionGranted(this,PermissionHelper.PERMISSION_USE_SIP))
-                startActivity(new Intent(this, CallActivity.class));
-               else
+        if (requestCode == PermissionHelper.CODE_PERMISSION) {
+            if (!PermissionHelper.isPermissionGranted(this, PermissionHelper.PERMISSION_RECORD_AUDIO)
+                    && !PermissionHelper.isPermissionGranted(this, PermissionHelper.PERMISSION_USE_SIP))
+                startActivity(new Intent(this, MainActivity.class));
+            else
                 Toast.makeText(this, "Check Permission App", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void Change(View view) {
+        updatePreferences();
     }
 }

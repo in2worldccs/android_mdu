@@ -3,6 +3,8 @@ package com.in2world.ccs.tools;
 import android.util.Log;
 
 public class SipErrorCode {
+
+    SipErrorCode sipErrorCode;
     private static final String TAG = "SipErrorCode";
     public static final int CLIENT_ERROR = -4;
     public static final int CROSS_DOMAIN_AUTHENTICATION = -44;

@@ -11,6 +11,11 @@ import com.in2world.ccs.R;
 import com.in2world.ccs.helper.ValidationHelper;
 import com.in2world.ccs.tools.GlobalData;
 
+import static com.in2world.ccs.tools.GlobalData.SIP_domain;
+import static com.in2world.ccs.tools.GlobalData.SIP_password;
+import static com.in2world.ccs.tools.GlobalData.SIP_username;
+import static com.in2world.ccs.tools.GlobalData.checkMyData;
+
 public class SipSettingsActivity extends AppCompatActivity {
     private EditText editUsername, editDomain, editpssword;
 
@@ -32,17 +37,11 @@ public class SipSettingsActivity extends AppCompatActivity {
     }
 
     private void init() {
-        if (SaveData.getInstance().isKeyExists(GlobalData.KEY_SIP_username)) {
-            GlobalData.SIP_username = SaveData.getInstance().getString(GlobalData.KEY_SIP_username);
-            editUsername.setText(GlobalData.SIP_username);
-        }
-        if (SaveData.getInstance().isKeyExists(GlobalData.KEY_SIP_domain)) {
-            GlobalData.SIP_domain = SaveData.getInstance().getString(GlobalData.KEY_SIP_domain);
-            editDomain.setText(GlobalData.SIP_domain);
-        }
-        if (SaveData.getInstance().isKeyExists(GlobalData.KEY_SIP_password)) {
-            GlobalData.SIP_password = SaveData.getInstance().getString(GlobalData.KEY_SIP_password);
-            editpssword.setText(GlobalData.SIP_password);
+
+        if (checkMyData()) {
+            editUsername.setText(SIP_username);
+            editDomain.setText(SIP_domain);
+            editpssword.setText(SIP_password);
         }
 
     }
@@ -50,24 +49,24 @@ public class SipSettingsActivity extends AppCompatActivity {
     public void Save(View view) {
 
         if (ValidationHelper.validString(editUsername.getText().toString())) {
-            GlobalData.SIP_username = editUsername.getText().toString();
-            SaveData.getInstance().saveString(GlobalData.KEY_SIP_username, GlobalData.SIP_username);
+            SIP_username = editUsername.getText().toString();
+            SaveData.getInstance().saveString(GlobalData.KEY_SIP_username, SIP_username);
         } else {
             editUsername.setError(getResources().getString(R.string.enter_username));
             return;
         }
 
         if (ValidationHelper.validString(editDomain.getText().toString())) {
-            GlobalData.SIP_domain = editDomain.getText().toString();
-            SaveData.getInstance().saveString(GlobalData.KEY_SIP_domain, GlobalData.SIP_domain);
+            SIP_domain = editDomain.getText().toString();
+            SaveData.getInstance().saveString(GlobalData.KEY_SIP_domain, SIP_domain);
         } else {
             editDomain.setError(getResources().getString(R.string.enter_domain));
             return;
         }
 
         if (ValidationHelper.validString(editpssword.getText().toString())) {
-            GlobalData.SIP_password = editpssword.getText().toString();
-            SaveData.getInstance().saveString(GlobalData.KEY_SIP_password, GlobalData.SIP_password);
+            SIP_password = editpssword.getText().toString();
+            SaveData.getInstance().saveString(GlobalData.KEY_SIP_password, SIP_password);
         } else {
             editpssword.setError(getResources().getString(R.string.enter_password));
             return;
