@@ -61,7 +61,7 @@ public class RootApplcation extends Application {
         // application.
         registerReceiver(context);
 
-        initializeManager(context);
+        initializeSIPManager(context);
     }
 
     private void registerReceiver(Context context){
@@ -71,7 +71,7 @@ public class RootApplcation extends Application {
         context.registerReceiver(callReceiver, filter);
     }
 
-    private  void initializeManager(Context context) {
+    private  void initializeSIPManager(Context context) {
         if (!ValidationHelper.validObject(SIP_Manager)) {
             SIP_Manager = SipManager.newInstance(context);
         }

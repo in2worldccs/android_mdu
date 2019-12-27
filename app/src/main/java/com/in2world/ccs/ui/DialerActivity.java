@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.in2world.ccs.R;
+import com.in2world.ccs.RootApplcation;
 import com.in2world.ccs.helper.ValidationHelper;
 import com.in2world.ccs.tools.SipStateCode;
 
@@ -78,12 +79,21 @@ public class DialerActivity extends AppCompatActivity {
         lySpeaker = findViewById(R.id.ly_speaker);
         speaker = findViewById(R.id.speaker);
 
-        if (!ValidationHelper.validObject(SIP_Manager)) {
+
+        checkInitializeSIPManager();
+
+
+        Initialize();
+    }
+
+    private void checkInitializeSIPManager(){
+
+
+        if (!ValidationHelper.validObject(SIP_Manager) && !ValidationHelper.validObject(SIP_Profile)) {
+            RootApplcation.getmRootApplcation().init(RootApplcation.getmRootApplcation());
             Toast.makeText(this, "SIP_Manager is null", Toast.LENGTH_SHORT).show();
             finish();
         }
-
-        init();
     }
 
     @Override
@@ -96,17 +106,13 @@ public class DialerActivity extends AppCompatActivity {
     }
 
 
-    private void init() {
-
-        if (!ValidationHelper.validObject(SIP_Manager))
-            finish();
+    private void Initialize() {
 
 
-        if (!ValidationHelper.validObject(SIP_Profile))
-            finish();
 
 
-        initCall();
+
+        InitializeCall();
 
         answer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -239,7 +245,7 @@ public class DialerActivity extends AppCompatActivity {
         });
     }
 
-    private void initCall() {
+    private void InitializeCall() {
 
         Log.d(TAG, "initCall: CALL_STATUS " + CALL_STATUS);
         switch (CALL_STATUS) {
@@ -493,7 +499,7 @@ public class DialerActivity extends AppCompatActivity {
     };
 
 
-    public static void sendCall(Context context, String phoneNumber) {
+    public static void makeCall(Context context, String phoneNumber) {
         if (!ValidationHelper.validString(phoneNumber)) {
             Toast.makeText(context, "no number", Toast.LENGTH_SHORT).show();
             return;

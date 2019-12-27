@@ -27,7 +27,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
     private EditText editName, editPass;
-    private String username, domain, password1 = "";
 
     private String name, password = "";
 
@@ -59,15 +58,11 @@ public class LoginActivity extends AppCompatActivity {
         name = editName.getText().toString();
         password = editPass.getText().toString();
 
-        if (!ValidationHelper.validString(name)) {
-            editName.setError(getResources().getString(R.string.enter_name));
-            return;
-        }
 
-        if (!ValidationHelper.validString(password)) {
-            editPass.setError(getResources().getString(R.string.enter_password));
+
+        if (!validate())
             return;
-        }
+
 
         if (!checkMyData()) {
             updatePreferences();
@@ -85,6 +80,23 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(this, "enter your data", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, SipSettingsActivity.class));
 
+    }
+
+
+
+    public boolean validate() {
+
+        if (!ValidationHelper.validString(name)) {
+            editName.setError(getResources().getString(R.string.enter_name));
+            return false;
+        }
+
+        if (!ValidationHelper.validString(password)) {
+            editPass.setError(getResources().getString(R.string.enter_password));
+            return false;
+        }
+
+        return true;
     }
 
 
