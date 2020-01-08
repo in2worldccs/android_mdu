@@ -1,6 +1,7 @@
 package com.in2world.ccs.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Vibrator;
 import android.util.Log;
@@ -16,6 +17,7 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.in2world.ccs.R;
+import com.in2world.ccs.ui.ChatUsersActivity;
 import com.in2world.ccs.ui.DialerActivity;
 
 import java.util.List;
@@ -63,6 +65,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.MyViewHolder
             @Override
             public void onClick(View v) {
 
+
+                context.startActivity(new Intent(context, ChatUsersActivity.class));
                 Toast.makeText(context, current, Toast.LENGTH_SHORT).show();
             }
         });
@@ -97,6 +101,12 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.MyViewHolder
                     DialerActivity.makeCall(context, item);
                 }
             });
+//            call.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    context.startActivity(new Intent(context, ChatUsersActivity.class));
+//                }
+//            });
         }
 
 

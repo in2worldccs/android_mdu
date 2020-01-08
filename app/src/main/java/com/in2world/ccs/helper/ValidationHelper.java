@@ -34,7 +34,6 @@ public class ValidationHelper {
     public static boolean validObject(Object myObject) {
         return myObject != null;
     }
-
     /**
      * @param list
      * @return valid List or notValid List

@@ -39,7 +39,7 @@ public class NotificationHelper {
 
     private static final String TAG = "NotificationHelper";
 
-    public static void showNotification(Context context,String title , String body , Boolean isRandom) {
+    public static void showNotification(Context context,String title , String body, String data , Boolean isRandom) {
 
         if (isRandom) {
             Random r = new Random();

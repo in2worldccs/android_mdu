@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.in2world.ccs.Database.SaveData;
 import com.in2world.ccs.helper.PermissionHelper;
 import com.in2world.ccs.helper.ValidationHelper;
@@ -50,7 +52,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void init() {
 
-
+        String recent_token = FirebaseInstanceId.getInstance().getToken();
+        Log.w(TAG, "init: recent_token "+recent_token);
     }
 
     public void LogIn(View view) {

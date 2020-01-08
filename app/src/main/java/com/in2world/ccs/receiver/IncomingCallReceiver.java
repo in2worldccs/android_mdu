@@ -16,6 +16,7 @@ import static com.in2world.ccs.tools.GlobalData.SIP_Audio_Call;
 import static com.in2world.ccs.tools.GlobalData.SIP_Manager;
 import static com.in2world.ccs.tools.GlobalData.IncomingCallIntent;
 import static com.in2world.ccs.tools.GlobalData.CALL_STATUS;
+import static com.in2world.ccs.ui.DialerActivity.isInstanceCreated;
 
 
 public class IncomingCallReceiver extends BroadcastReceiver {
@@ -32,7 +33,13 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
        Log.d(TAG, "onReceive: ");
-       DialerActivity.receiveCall(context,intent);
+
+        DialerActivity.receiveCall(context,intent);
+        //IncomingCallIntent = intent;
+        //CALL_STATUS = IN_COMING;
+        //Intent intentCall = new Intent(context, DialerActivity.class);
+        //intentCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //context.startActivity(intentCall);
     }
 
 }

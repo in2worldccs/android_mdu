@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "481253332015",
+    "firebase_url": "https://critical-communication-system.firebaseio.com",
+    "project_id": "critical-communication-system",
+    "storage_bucket": "critical-communication-system.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:481253332015:android:2bb844b212b2301b6922da",
+        "android_client_info": {
+          "package_name": "com.in2world.ccs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "481253332015-47a4ac7gprnlilmdupch68bhu3fdn7v3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.in2world.ccs",
+            "certificate_hash": "26288810269bb8c549fbe4c08c654c52085a44fc"
+          }
+        },
+        {
+          "client_id": "481253332015-d1oj47tt2jj71310n9no8q2jlofqg66q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_NXSiM6UnFzNo-deCa24XqcUZgb71f6o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "481253332015-d1oj47tt2jj71310n9no8q2jlofqg66q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

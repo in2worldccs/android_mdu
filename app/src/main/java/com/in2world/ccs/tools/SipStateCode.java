@@ -32,7 +32,7 @@ public class SipStateCode {
     /** Not defined. */
     public static final int NOT_DEFINED = 101;
     public static final int DECLINED = 603;
-
+    public static final int CONNECTING = 701;
 
     /**
      * Converts the state to string.
@@ -59,6 +59,8 @@ public class SipStateCode {
                 return "IN_CALL";
             case PINGING:
                 return "PINGING";
+            case CONNECTING:
+                return "CONNECTING";
             default:
                 return "NOT_DEFINED";
         }
@@ -91,6 +93,8 @@ public class SipStateCode {
                 return "REGISTERING";
             case DECLINED :
                 return "DECLINED";
+            case CONNECTING :
+                return "CONNECTING";
             default:
                 return "null";
         }
