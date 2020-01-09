@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">ccs</string>
+    <string name="allow">allow</string>
+    <string name="cancel">cancel</string>
+    <string name="enter_name">Enter Name</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="enter_username">Enter Username</string>
+    <string name="enter_domain">Enter Domain</string>
+    <string name="cssServiceChannel">cssServiceChannel</string>
 </resources>
