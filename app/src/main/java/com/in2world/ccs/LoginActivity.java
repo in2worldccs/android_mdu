@@ -64,14 +64,15 @@ public class LoginActivity extends AppCompatActivity {
             return;
 
 
+         if (!checkPermission())
+            return;
+        
         if (!checkMyData()) {
             updatePreferences();
             return;
         }
 
-        if (!checkPermission())
-            return;
-
+      
         RootApplcation.getmRootApplcation().init(this);
         startActivity(new Intent(this, MainActivity.class));
     }
@@ -115,10 +116,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PermissionHelper.CODE_PERMISSION) {
             if (!PermissionHelper.isPermissionGranted(this, PermissionHelper.PERMISSION_RECORD_AUDIO)
-                    && !PermissionHelper.isPermissionGranted(this, PermissionHelper.PERMISSION_USE_SIP))
-                startActivity(new Intent(this, MainActivity.class));
-            else
+                    && !PermissionHelper.isPermissionGranted(this, PermissionHelper.PERMISSION_USE_SIP)){
+            } else{
                 Toast.makeText(this, "Check Permission App", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
