@@ -26,6 +26,17 @@ import com.in2world.ccs.tools.GlobalData;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.in2world.ccs.server.WebService.Status.BAD_REQUEST;
+import static com.in2world.ccs.server.WebService.Status.CONFLICT;
+import static com.in2world.ccs.server.WebService.Status.CREATED;
+import static com.in2world.ccs.server.WebService.Status.FORBIDDEN;
+import static com.in2world.ccs.server.WebService.Status.NOT_FOUND;
+import static com.in2world.ccs.server.WebService.Status.NO_INTERNET;
+import static com.in2world.ccs.server.WebService.Status.OK;
+import static com.in2world.ccs.server.WebService.Status.SERVER_ERROR;
+import static com.in2world.ccs.server.WebService.Status.UNAUTHORIZED;
+import static com.in2world.ccs.server.WebService.Status.VALIDATION_FAILED;
 import static com.in2world.ccs.tools.GlobalData.TOKEN_VALUE;
 
 public class WebService {
@@ -56,7 +67,6 @@ public class WebService {
 
         //Auth
         LOGIN(DOMAIN_URL + "auth/login", Request.Method.POST),
-
 
         //Users
         USERS(DOMAIN_URL + "users", Request.Method.POST),
@@ -122,7 +132,6 @@ public class WebService {
         Log.d(TAG, "WebService : mRequestAPI " + mRequestAPI.toString());
         Log.d(TAG, "WebService : mHeader " + mHeader.toString());
         Log.d(TAG, "WebService : mRequestFile " + mRequest.toString());
-
         VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(mRequestAPI.getRequestMethod(),
                 mRequestAPI.getValue(), new Response.Listener<NetworkResponse>() {
             @Override
@@ -221,7 +230,7 @@ public class WebService {
 
 
     private void getConnection() {
-        String newURL = mRequestAPI.getValue();
+       String newURL = mRequestAPI.getValue();
 
 
        handlerUrl(newURL);
@@ -314,10 +323,10 @@ public class WebService {
                 return super.parseNetworkResponse(response);
             }
 
-//            @Override
-//            public String getBodyContentType() {
-//                return "application/json";
-//            }
+           @Override
+           public String getBodyContentType() {
+               return "application/json";
+           }
         };
         strReq.setRetryPolicy(new DefaultRetryPolicy(0, -1, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         RootApplcation.getmRootApplcation().addToRequestQueue(strReq);
@@ -337,35 +346,6 @@ public class WebService {
         }
         Log.d(TAG, "handlerUrl: mURL "+mURL);
     }
-
-
-   /* public WebService(RequestAPI requestAPI, HashMap<String, String> dataRequest, OnResponding onResponding) {
-        this.onResponding = onResponding;
-        mRequestAPI = requestAPI;
-        mHeader = initializeHeader();
-        mRequest = dataRequest;
-        mResponse = initializeHashMap();
-        if (!ValidationHelper.validObject(mRequest))
-            mRequest = new HashMap<>();
-
-        Log.d(TAG ,"WebService : mRequestAPI " + mRequestAPI.toString());
-        Log.d(TAG ,"WebService : mHeader " + mHeader.toString());
-        Log.d(TAG ,"WebService : mRequest " + mRequest.toString());
-
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("message", "Message");
-
-        //Simply put a byte[] to the params, AQuery will detect it and treat it as a multi-part post
-        byte[] data = getImageData();
-        params.put("source", data);
-
-        //Alternatively, put a File or InputStream instead of byte[]
-        //File file = getImageFile();
-        //params.put("source", file);
-
-        AQuery aq = new AQuery(getApplicationContext());
-        aq.auth(handle).ajax(url, params, JSONObject.class, this, "photoCb");
-    }*/
 
 
     private Map<String, String> initializeHeader() {
@@ -388,33 +368,34 @@ public class WebService {
 
         switch ((int) mResponse.get(RESPONSE_CODE)) {
             case -101:
-            case 0:
+            case NO_INTERNET:
                 onResponding.onResponding(mRequestAPI, false, StatusConnection.NO_CONNECTION, mResponse);
                 break;
-            case 200:
+            case OK:
                 onResponding.onResponding(mRequestAPI, true, StatusConnection.SUCCESS, mResponse);
                 break;
-            case 201:
+            case CREATED:
                 onResponding.onResponding(mRequestAPI, true, StatusConnection.CREATED, mResponse);
                 break;
-            case 400:
+            case BAD_REQUEST:
                 onResponding.onResponding(mRequestAPI, false, StatusConnection.BAD_REQUEST, mResponse);
                 break;
-            case 401:
+            case UNAUTHORIZED:
                 onResponding.onResponding(mRequestAPI, false, StatusConnection.UNAUTHORIZED, mResponse);
                 break;
-            case 403:
+            case FORBIDDEN:
                 onResponding.onResponding(mRequestAPI, false, StatusConnection.FORBIDDEN, mResponse);
-            case 404:
+                break;
+            case NOT_FOUND:
                 onResponding.onResponding(mRequestAPI, false, StatusConnection.NOT_FOUND, mResponse);
                 break;
-            case 409:
+            case CONFLICT:
                 onResponding.onResponding(mRequestAPI, false, StatusConnection.CREATED, mResponse);
                 break;
-            case 422:
+            case VALIDATION_FAILED:
                 onResponding.onResponding(mRequestAPI, false, StatusConnection.VALIDATION_FAILED, mResponse);
                 break;
-            case 500:
+            case SERVER_ERROR:
                 onResponding.onResponding(mRequestAPI, false, StatusConnection.INTERNAL_SERVER_ERROR, mResponse);
                 break;
             default:
@@ -422,22 +403,24 @@ public class WebService {
         }
     }
 
-    /*
-    * const Status = {
-        OK: 200,
-        CREATED: 201,
-        ACCEPTED: 202,
-        NO_CONTENT: 204,
-        NOT_MODIFIED: 304,
-        BAD_REQUEST: 400,
-        UNAUTHORIZED: 401,
-        FORBIDDEN: 403,
-        NOT_FOUND: 404,
-        UNSUPPORTED_ACTION: 405,
-        VALIDATION_FAILED: 422,
-        SERVER_ERROR: 500
+
+    public static class Status  {
+        public static final int NO_INTERNET =  0;
+        public static final int OK =  200;
+        public static final int CREATED =  201;
+        public static final int ACCEPTED =  202;
+        public static final int NO_CONTENT =  204;
+        public static final int NOT_MODIFIED =  304;
+        public static final int BAD_REQUEST =  400;
+        public static final int UNAUTHORIZED =  401;
+        public static final int FORBIDDEN =  403;
+        public static final int NOT_FOUND =  404;
+        public static final int UNSUPPORTED_ACTION =  405;
+        public static final int CONFLICT =  409;
+        public static final int VALIDATION_FAILED =  422;
+        public static final int SERVER_ERROR = 500;
     };
-    * */
+
     public enum StatusConnection {
         SUCCESS,
         CREATED,
@@ -446,6 +429,7 @@ public class WebService {
         FORBIDDEN,
         NOT_FOUND,
         UNSUPPORTED_ACTION,
+        CONFLICT,
         VALIDATION_FAILED,
         NO_PRIVILEGE,
         NO_CONNECTION,
@@ -458,8 +442,4 @@ public class WebService {
         void onResponding(RequestAPI requestAPI, boolean IsSuccess, StatusConnection statusConnection, HashMap<String, Object> objectResult);
     }
 
-    public interface Result {
-        public void onResult(Object object, String function, boolean IsSuccess, int RequestStatus, String MessageStatus);
-
-    }
 }
