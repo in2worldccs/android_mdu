@@ -26,8 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.in2world.ccs.R;
-import com.in2world.ccs.RootApplcation;
 import com.in2world.ccs.helper.Config;
+import com.in2world.ccs.helper.NotificationHelper;
 import com.in2world.ccs.helper.ValidationHelper;
 import com.in2world.ccs.server.Result;
 import com.in2world.ccs.server.fcm.FCM;
@@ -35,25 +35,24 @@ import com.in2world.ccs.service.SIP_Service;
 import com.in2world.ccs.tools.GlobalData;
 import com.in2world.ccs.tools.SipStateCode;
 
-import static com.in2world.ccs.tools.GlobalData.CALLING;
 import static com.in2world.ccs.tools.GlobalData.CALL_STATUS;
-import static com.in2world.ccs.tools.GlobalData.CLOSE;
 import static com.in2world.ccs.tools.GlobalData.CONNECTED;
 import static com.in2world.ccs.tools.GlobalData.IN_COMING;
+import static com.in2world.ccs.tools.GlobalData.IN_COMING_START;
 import static com.in2world.ccs.tools.GlobalData.IncomingCallIntent;
-import static com.in2world.ccs.tools.GlobalData.KEY_SIP_domain;
+import static com.in2world.ccs.tools.GlobalData.IsIncomingCaller;
 import static com.in2world.ccs.tools.GlobalData.OUT_COMING;
-import static com.in2world.ccs.tools.GlobalData.READY;
+import static com.in2world.ccs.tools.GlobalData.OUT_COMING_START;
 import static com.in2world.ccs.tools.GlobalData.RINGING;
 import static com.in2world.ccs.tools.GlobalData.SIP_Manager;
 import static com.in2world.ccs.tools.GlobalData.CALL_NUMBER;
 import static com.in2world.ccs.tools.GlobalData.SIP_Profile;
-import static com.in2world.ccs.tools.GlobalData.SIP_domain;
 import static com.in2world.ccs.tools.SipStateCode.CONNECTING;
 import static com.in2world.ccs.tools.SipStateCode.ENDING_CALL;
 import static com.in2world.ccs.tools.SipStateCode.IN_CALL;
 import static com.in2world.ccs.tools.SipStateCode.READY_TO_CALL;
-import static com.in2world.ccs.tools.SipStateCode.toString;
+import static com.in2world.ccs.service.SIP_Service.incomingCall;
+import static com.in2world.ccs.service.SIP_Service.outcomingCall;
 import static com.in2world.ccs.tools.SipStateCode.getStateName;
 
 public class DialerActivity extends AppCompatActivity {
@@ -63,8 +62,8 @@ public class DialerActivity extends AppCompatActivity {
     private TextView callName, callInfo;
     private Button answer, close, hangup;
 
-    private SipAudioCall incomingCall = null;
-    private SipAudioCall outcomingCall = null;
+   // private SipAudioCall incomingCall = null;
+   // private SipAudioCall outcomingCall = null;
 
     private SipAudioCall sipAudioCall = null;
 
@@ -89,6 +88,14 @@ public class DialerActivity extends AppCompatActivity {
     public static boolean isInstanceCreated() {
         return instance != null;
     }//met
+
+    public static DialerActivity getInstance() {
+        return instance;
+    }
+
+    public static void setInstance(DialerActivity instance) {
+        DialerActivity.instance = instance;
+    }
 
     private void initView() {
         Log.d(TAG, "initView: ");
@@ -116,7 +123,7 @@ public class DialerActivity extends AppCompatActivity {
         Log.d(TAG, "checkInitializeSIPManager: ");
 
         if (!ValidationHelper.validObject(SIP_Manager) && !ValidationHelper.validObject(SIP_Profile)) {
-            RootApplcation.getmRootApplcation().init(RootApplcation.getmRootApplcation());
+            SIP_Service.startSIPServices(this);
             Toast.makeText(this, "SIP_Manager is null", Toast.LENGTH_SHORT).show();
             finish();
         }
@@ -126,6 +133,8 @@ public class DialerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dialer);
+        IsIncomingCaller = true;
+        setInstance(this);
         Log.d(TAG, "onCreate: ");
         initView();
     }
@@ -159,6 +168,7 @@ public class DialerActivity extends AppCompatActivity {
 
                     stopMediaPlayer();
 
+                    NotificationHelper.callNotification(DialerActivity.this,"calling","connected","end");
                     updateStatus(CONNECTED);
                 } catch (SipException e) {
                     Log.e(TAG, "onClick: SipException " + e.getMessage());
@@ -178,6 +188,8 @@ public class DialerActivity extends AppCompatActivity {
                     stopMediaPlayer();
                     incomingCall.endCall();
 
+
+                    NotificationHelper.cancelNotification(DialerActivity.this,NotificationHelper.NOTIFICATION_ID_CALL);
                     // finishDialerActivity();
                 } catch (SipException e) {
                     Log.e(TAG, "onClick: SipException " + e.getMessage());
@@ -201,6 +213,7 @@ public class DialerActivity extends AppCompatActivity {
 
                     stopMediaPlayer();
 
+                    NotificationHelper.cancelNotification(DialerActivity.this,NotificationHelper.NOTIFICATION_ID_CALL);
                     finishDialerActivity();
 
 
@@ -305,6 +318,11 @@ public class DialerActivity extends AppCompatActivity {
             case OUT_COMING:
                 whenOutComingCall(true);
                 break;
+            case IN_COMING_START:
+                whenInComingCall_IsStarted();
+                break;
+            case OUT_COMING_START:
+                break;
             default:
                 finishDialerActivity();
                 break;
@@ -314,22 +332,15 @@ public class DialerActivity extends AppCompatActivity {
     private void whenInComingCall() {
         Log.d(TAG, "whenInComingCall: ");
         close.setVisibility(View.GONE);
-        try {
-            Toast.makeText(this, "IncomingCallIntent : " + ValidationHelper.validObject(IncomingCallIntent), Toast.LENGTH_SHORT).show();
-            outcomingCall = null;
-            incomingCall = SIP_Manager.takeAudioCall(IncomingCallIntent, listener_incoming);
-            CALL_NUMBER = incomingCall.getPeerProfile().getUserName();
 
-            Log.d(TAG, "whenInComingCall: Profile " + incomingCall.getPeerProfile().getProfileName());
-            Log.d(TAG, "whenInComingCall: Display " + incomingCall.getPeerProfile().getDisplayName());
-            Log.d(TAG, "whenInComingCall: User " + incomingCall.getPeerProfile().getUserName());
+            Toast.makeText(this, "IncomingCallIntent : " + ValidationHelper.validObject(IncomingCallIntent), Toast.LENGTH_SHORT).show();
+
+
+            CALL_NUMBER = incomingCall.getPeerProfile().getUserName();
             updateStatus(RINGING);
             if (ValidationHelper.validString(CALL_NUMBER))
                 callName.setText(CALL_NUMBER);
-        } catch (SipException e) {
-            Log.e(TAG, "whenInComingCall: e " + e.getMessage());
-            e.printStackTrace();
-        }
+
     }
 
     public void whenOutComingCall(boolean isNotfcation) {
@@ -349,15 +360,40 @@ public class DialerActivity extends AppCompatActivity {
             sendMsg();
             return;
         }
-        try {
             updateStatus(RINGING);
-            incomingCall = null;
-            outcomingCall = SIP_Manager.makeAudioCall(SIP_Profile.getUriString(), CALL_NUMBER + "@" + SIP_domain, listener_outcoming, 30);
+            SIP_Service.getInstance().whenOutComingCall();
             settingCall.setVisibility(View.VISIBLE);
+
+    }
+    private void whenInComingCall_IsStarted(){
+        if (!ValidationHelper.validObject(incomingCall)) {
+            finish();
+        } try {
+
+            answer.setVisibility(View.GONE);
+            hangup.setVisibility(View.GONE);
+            close.setVisibility(View.VISIBLE);
+            settingCall.setVisibility(View.VISIBLE);
+            mChronometer.setVisibility(View.VISIBLE);
+            mChronometer.start();
+            updateStatus(CONNECTED);
+            SIP_Service.getInstance().stopNotificationSound();
+            incomingCall.answerCall(30);
+            incomingCall.startAudio();
+            incomingCall.setSpeakerMode(false);
+
+
+            CALL_NUMBER = incomingCall.getPeerProfile().getUserName();
+            if (ValidationHelper.validString(CALL_NUMBER))
+                callName.setText(CALL_NUMBER);
         } catch (SipException e) {
-            Log.e(TAG, "whenOutComingCall: " + e.getMessage());
+            Log.e(TAG, "onClick: SipException " + e.getMessage());
+            Toast.makeText(instance, " No call to answer ", Toast.LENGTH_SHORT).show();
+            finish();
             e.printStackTrace();
         }
+
+
     }
 
     private void sendMsg() {
@@ -371,7 +407,7 @@ public class DialerActivity extends AppCompatActivity {
     }
 
 
-    SipAudioCall.Listener listener_incoming = new SipAudioCall.Listener() {
+  public  SipAudioCall.Listener listener_incoming = new SipAudioCall.Listener() {
         @Override
         public void onRinging(SipAudioCall call, SipProfile caller) {
             Log.d(TAG, "in onRinging: ");
@@ -449,10 +485,11 @@ public class DialerActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         CALL_STATUS = -1;
-        instance = null;
+        setInstance(null);
+        IsIncomingCaller = false;
         stopMediaPlayer();
-        if (SIP_Service.isInstanceCreated())
-            SIP_Service.stopAppCheckServices(this);
+        //if (SIP_Service.isInstanceCreated())
+        //SIP_Service.stopSIPServices(this);
     }
 
 
@@ -490,11 +527,12 @@ public class DialerActivity extends AppCompatActivity {
     public void finishDialerActivity() {
         CALL_STATUS = -1;
         finish();
+
     }
 
     public void stopMediaPlayer() {
-        Log.d(TAG, "stopMediaPlayer: mediaPlayer " + ValidationHelper.validObject(mediaPlayer));
-        Log.d(TAG, "stopMediaPlayer: isPlaying " + mediaPlayer.isPlaying());
+        //Log.d(TAG, "stopMediaPlayer: mediaPlayer " + ValidationHelper.validObject(mediaPlayer));
+      //  Log.d(TAG, "stopMediaPlayer: isPlaying " + mediaPlayer.isPlaying());
         if (ValidationHelper.validObject(mediaPlayer)) {
             mediaPlayer.stop();
         }
@@ -610,7 +648,8 @@ public class DialerActivity extends AppCompatActivity {
         CALL_STATUS = IN_COMING;
         Intent intentCall = new Intent(context, DialerActivity.class);
         intentCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intentCall);
+        if (!IsIncomingCaller)
+            context.startActivity(intentCall);
         Log.d(TAG, "receiveCall: 2");
     }
 
@@ -630,7 +669,6 @@ public class DialerActivity extends AppCompatActivity {
         active = false;
         if (mRegistrationBroadcastReceiver != null)
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
-
     }
 
 

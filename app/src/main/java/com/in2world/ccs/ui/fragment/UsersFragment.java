@@ -54,6 +54,10 @@ public class UsersFragment extends Fragment {
 
     private void addData() {
         listUsers = new ArrayList<>();
+        listUsers.add("101");
+        listUsers.add("102");
+        listUsers.add("103");
+        listUsers.add("104");
         listUsers.add("8001");
         listUsers.add("8002");
         listUsers.add("8003");

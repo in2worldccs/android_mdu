@@ -9,8 +9,11 @@ import android.widget.EditText;
 import com.in2world.ccs.Database.SaveData;
 import com.in2world.ccs.R;
 import com.in2world.ccs.helper.ValidationHelper;
+import com.in2world.ccs.service.SIP_Service;
 import com.in2world.ccs.tools.GlobalData;
 
+import static com.in2world.ccs.RootApplcation.closeLocalProfile;
+import static com.in2world.ccs.service.SIP_Service.startSIPServices;
 import static com.in2world.ccs.tools.GlobalData.SIP_domain;
 import static com.in2world.ccs.tools.GlobalData.SIP_password;
 import static com.in2world.ccs.tools.GlobalData.SIP_username;
@@ -48,6 +51,7 @@ public class SipSettingsActivity extends AppCompatActivity {
 
     public void Save(View view) {
 
+        closeLocalProfile();
         if (ValidationHelper.validString(editUsername.getText().toString())) {
             SIP_username = editUsername.getText().toString();
             SaveData.getInstance().saveString(GlobalData.KEY_SIP_username, SIP_username);
@@ -71,6 +75,11 @@ public class SipSettingsActivity extends AppCompatActivity {
             editpssword.setError(getResources().getString(R.string.enter_password));
             return;
         }
+
+        SIP_Service.stopSIPServices(this);
+        if (!SIP_Service.isInstanceCreated())
+            startSIPServices(this);
+
 
         finish();
 

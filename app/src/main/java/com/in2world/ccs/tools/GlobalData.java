@@ -27,11 +27,14 @@ public class GlobalData {
 
     public static final int IN_COMING = 100;
     public static final int OUT_COMING = 101;
+    public static final int IN_COMING_START = 102;
+    public static final int OUT_COMING_START = 103;
     public static final int READY = 1;
     public static final int CALLING = 2;
     public static final int RINGING = 3;
     public static final int CONNECTED = 4;
     public static final int CLOSE = 5;
+    public static boolean IsIncomingCaller = false;
 
 
     public static String SIP_STATUS = "Not Ready";
@@ -44,6 +47,11 @@ public class GlobalData {
 
 
     public static boolean checkMyData() {
+
+       // SIP_username = "101";
+       // SIP_domain  = "alhassan9.tk";
+       // SIP_password = "101";
+
 
         if (ValidationHelper.validString(SIP_username) &&
                 ValidationHelper.validString(SIP_domain) &&
@@ -67,6 +75,34 @@ public class GlobalData {
 
         return true;
     }
+
+
+
+
+
+
+    public static String TOKEN_KEY = "token";
+    public static String TOKEN_VALUE;
+    public static String PROFILE_KEY = "PROFILE_KEY";
+    public static String mProfile = "";
+
+    public static boolean IS_TOKEN() {
+        if (ValidationHelper.validString(TOKEN_VALUE))
+            return true;
+
+        TOKEN_VALUE = SaveData.getInstance().getString(TOKEN_KEY);
+
+        return ValidationHelper.validString(TOKEN_VALUE);
+    }
+
+//    public static boolean IS_PROFILE() {
+//        if (ValidationHelper.validObject(mDriver))
+//            return true;
+//
+//        mDriver = SaveData.getInstance().getObject(PROFILE_KEY, Driver.class);
+//
+//        return ValidationHelper.validObject(mDriver);
+//    }
 
 
 }

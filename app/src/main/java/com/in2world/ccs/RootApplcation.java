@@ -16,11 +16,15 @@ import android.view.WindowManager;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.crashlytics.android.Crashlytics;
 import com.in2world.ccs.Database.SaveData;
 import com.in2world.ccs.helper.Config;
 import com.in2world.ccs.helper.ValidationHelper;
 import com.in2world.ccs.receiver.IncomingCallReceiver;
+import com.in2world.ccs.service.MyFirebaseMessagingService;
 import com.in2world.ccs.service.SIP_Service;
 import com.in2world.ccs.tools.GlobalData;
 import com.in2world.ccs.ui.DialerActivity;
@@ -30,6 +34,7 @@ import io.fabric.sdk.android.Fabric;
 import java.text.ParseException;
 
 import static com.in2world.ccs.server.fcm.FCM.sendToCall;
+import static com.in2world.ccs.service.SIP_Service.startSIPServices;
 import static com.in2world.ccs.tools.GlobalData.READY;
 import static com.in2world.ccs.tools.GlobalData.SIP_Manager;
 import static com.in2world.ccs.tools.GlobalData.SIP_Profile;
@@ -54,7 +59,12 @@ public class RootApplcation extends Application {
         Fabric.with(this, new Crashlytics());
         setmRootApplcation(this);
         SaveData.init(this);
-        init(this);
+     //   init(this);
+
+        SIP_Service.stopSIPServices(this);
+        if (!SIP_Service.isInstanceCreated())
+            startSIPServices(this);
+
     }
 
 
@@ -67,26 +77,8 @@ public class RootApplcation extends Application {
         Log.d(TAG, "init: domain " + SIP_domain);
         Log.d(TAG, "init: password " + SIP_password);
 
-        // Set up the intent filter.  This will be used to fire an
-        // IncomingCallReceiver when someone calls the SIP address used by this
-        // application.
 
-        try {
-
-            if (ValidationHelper.validObject(SIP_Manager)) {
-                if (ValidationHelper.validObject(SIP_Profile)) {
-                    Log.d(TAG, "init: isRegistered " + SIP_Manager.isRegistered(SIP_Profile.getProfileName()));
-                    Log.d(TAG, "init: isOpened " + SIP_Manager.isOpened(SIP_Profile.getProfileName()));
-                    Log.d(TAG, "init: getAutoRegistration " + SIP_Profile.getAutoRegistration());
-                }
-            }
-
-
-        } catch (SipException e) {
-            e.printStackTrace();
-            Log.e(TAG, "init: e " + e.getMessage());
-        }
-        registerReceiver(context);
+      //  registerReceiver(context);
 
         initializeSIPManager(context);
     }
@@ -131,9 +123,7 @@ public class RootApplcation extends Application {
         }
 
         Log.d(TAG, "initializeSip: 1");
-        if (SIP_Profile != null) {
-            closeLocalProfile();
-        }
+        closeLocalProfile();
         Log.d(TAG, "initializeSip: 2");
         if (!ValidationHelper.validString(SIP_username) ||
                 !ValidationHelper.validString(SIP_domain) ||
@@ -145,8 +135,9 @@ public class RootApplcation extends Application {
         try {
             SipProfile.Builder builder = new SipProfile.Builder(SIP_username, SIP_domain);
             builder.setPassword(SIP_password);
+            //builder.setAuthUserName(auth_username);
+            //builder.setOutboundProxy(outbound_proxy)
             SIP_Profile = builder.build();
-
 
             Log.d(TAG, "initializeSip: 6");
 
@@ -200,14 +191,20 @@ public class RootApplcation extends Application {
      * and unregistering your device from the server.
      */
     public static void closeLocalProfile() {
+        Log.d(TAG, "closeLocalProfile: ");
         if (SIP_Manager == null) {
             return;
         }
+        Log.d(TAG, "closeLocalProfile: 1");
         try {
             if (SIP_Profile == null) {
-                return;
+                SipProfile.Builder builder = new SipProfile.Builder(SIP_username, SIP_domain);
+                builder.setPassword(SIP_password);
+                SIP_Profile = builder.build();
             }
+
             SIP_Manager.close(SIP_Profile.getUriString());
+            Log.w(TAG, "closeLocalProfile: Done DoneDoneDoneDone "+SIP_Profile.getUriString());
         } catch (Exception ee) {
             Log.e(TAG,"onDestroy Failed to close local profile.", ee);
         }
@@ -228,4 +225,20 @@ public class RootApplcation extends Application {
     public static void setmRootApplcation(RootApplcation mRootApplcation) {
         RootApplcation.mRootApplcation = mRootApplcation;
     }
+
+    private RequestQueue requestQueue;
+
+    public RequestQueue getRequestQueue() {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(getApplicationContext());
+        }
+
+        return requestQueue;
+    }
+
+    public <T> void addToRequestQueue(Request<T> req) {
+        req.setTag(TAG);
+        getRequestQueue().add(req);
+    }
+
 }

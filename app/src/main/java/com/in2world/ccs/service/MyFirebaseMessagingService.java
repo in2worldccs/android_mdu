@@ -1,6 +1,7 @@
 package com.in2world.ccs.service;
 
 import android.content.Intent;
+import android.net.sip.SipManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -25,7 +26,9 @@ import static com.in2world.ccs.server.fcm.FCM.FCM_NAME;
 import static com.in2world.ccs.server.fcm.FCM.FCM_DATA;
 import static com.in2world.ccs.server.fcm.FCM.SIP_READY;
 import static com.in2world.ccs.server.fcm.FCM.SIP_RUN;
-import static com.in2world.ccs.service.SIP_Service.startAppCheckServices;
+import static com.in2world.ccs.server.fcm.FCM.sendToCall;
+import static com.in2world.ccs.service.SIP_Service.startSIPServices;
+import static com.in2world.ccs.tools.GlobalData.SIP_Manager;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -97,9 +100,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         switch (TITLE){
             case SIP_RUN:
-              //  Intent intentService = new Intent(MyFirebaseMessagingService.this, SIP_Service.class);
-               // startService(intentService);
-                startAppCheckServices(MyFirebaseMessagingService.this);
+
+                if (!SIP_Service.isInstanceCreated())
+                  startSIPServices(MyFirebaseMessagingService.this);
+                else if(!ValidationHelper.validObject(SIP_Manager)){
+                    startSIPServices(MyFirebaseMessagingService.this);
+                }else {
+                    sendToCall(MyFirebaseMessagingService.this);
+                }
                 break;
             case SIP_READY:
 

@@ -10,7 +10,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".TestActivity"></activity>
+        <activity android:name=".TestActivity">
+
+        </activity>
         <activity android:name=".ui.ChatGroupsActivity" />
         <activity android:name=".ui.ChatUsersActivity" />
         <activity android:name=".ui.DialerActivity" />
@@ -54,6 +56,9 @@
         -->
         <receiver
             android:name=".receiver.IncomingCallReceiver"
+            android:label="Call Receiver" />
+        <receiver
+            android:name=".receiver.CallerReceiver"
             android:label="Call Receiver" />
         <service
             android:name=".service.SIP_Service"

@@ -1,8 +1,14 @@
 package com.in2world.ccs;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -11,7 +17,14 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.in2world.ccs.helper.NotificationHelper;
+import com.in2world.ccs.ui.ChatGroupsActivity;
+import com.in2world.ccs.ui.ChatUsersActivity;
+import com.in2world.ccs.ui.MainActivity;
+
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
+
 
 public class TestActivity extends AppCompatActivity {
     private ImageButton forwardbtn, backwardbtn, pausebtn, playbtn;
@@ -20,96 +33,23 @@ public class TestActivity extends AppCompatActivity {
     private SeekBar songPrgs;
     private static int oTime =0, sTime =0, eTime =0, fTime = 5000, bTime = 5000;
     private Handler hdlr = new Handler();
+
+    NotificationCompat.Builder builder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
-        backwardbtn = (ImageButton)findViewById(R.id.btnBackward);
-        forwardbtn = (ImageButton)findViewById(R.id.btnForward);
-        playbtn = (ImageButton)findViewById(R.id.btnPlay);
-        pausebtn = (ImageButton)findViewById(R.id.btnPause);
-        songName = (TextView)findViewById(R.id.txtSname);
-        startTime = (TextView)findViewById(R.id.txtStartTime);
-        songTime = (TextView)findViewById(R.id.txtSongTime);
-        songName.setText("Baitikochi Chuste");
-        mPlayer = MediaPlayer.create(this, R.raw.notes_of_the_optimistic);
-        songPrgs = (SeekBar)findViewById(R.id.sBar);
-        songPrgs.setClickable(false);
-        pausebtn.setEnabled(false);
 
-        playbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(TestActivity.this, "Playing Audio", Toast.LENGTH_SHORT).show();
-                mPlayer.start();
-                eTime = mPlayer.getDuration();
-                sTime = mPlayer.getCurrentPosition();
-                if(oTime == 0){
-                    songPrgs.setMax(eTime);
-                    oTime =1;
-                }
-                songTime.setText(String.format("%d min, %d sec", TimeUnit.MILLISECONDS.toMinutes(eTime),
-                        TimeUnit.MILLISECONDS.toSeconds(eTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS. toMinutes(eTime))) );
-                startTime.setText(String.format("%d min, %d sec", TimeUnit.MILLISECONDS.toMinutes(sTime),
-                        TimeUnit.MILLISECONDS.toSeconds(sTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS. toMinutes(sTime))) );
-                songPrgs.setProgress(sTime);
-                hdlr.postDelayed(UpdateSongTime, 100);
-                pausebtn.setEnabled(true);
-                playbtn.setEnabled(false);
-            }
-        });
-        pausebtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPlayer.pause();
-                pausebtn.setEnabled(false);
-                playbtn.setEnabled(true);
-                Toast.makeText(getApplicationContext(),"Pausing Audio", Toast.LENGTH_SHORT).show();
-            }
-        });
-        forwardbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if((sTime + fTime) <= eTime)
-                {
-                    sTime = sTime + fTime;
-                    mPlayer.seekTo(sTime);
-                }
-                else
-                {
-                    Toast.makeText(getApplicationContext(), "Cannot jump forward 5 seconds", Toast.LENGTH_SHORT).show();
-                }
-                if(!playbtn.isEnabled()){
-                    playbtn.setEnabled(true);
-                }
-            }
-        });
-        backwardbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if((sTime - bTime) > 0)
-                {
-                    sTime = sTime - bTime;
-                    mPlayer.seekTo(sTime);
-                }
-                else
-                {
-                    Toast.makeText(getApplicationContext(), "Cannot jump backward 5 seconds", Toast.LENGTH_SHORT).show();
-                }
-                if(!playbtn.isEnabled()){
-                    playbtn.setEnabled(true);
-                }
-            }
-        });
     }
-    private Runnable UpdateSongTime = new Runnable() {
-        @Override
-        public void run() {
-            sTime = mPlayer.getCurrentPosition();
-            startTime.setText(String.format("%d min, %d sec", TimeUnit.MILLISECONDS.toMinutes(sTime),
-                    TimeUnit.MILLISECONDS.toSeconds(sTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(sTime))) );
-            songPrgs.setProgress(sTime);
-            hdlr.postDelayed(this, 100);
-        }
-    };
+
+    public void onText(View view) {
+        Toast.makeText(this, "onText", Toast.LENGTH_SHORT).show();
+        //showHeadsUpNotification();
+
+        NotificationHelper.callNotification(this,"calling","Incoming recive ...","");
+    }
+
+
+
 }

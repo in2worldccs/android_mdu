@@ -7,4 +7,5 @@
     <string name="enter_username">Enter Username</string>
     <string name="enter_domain">Enter Domain</string>
     <string name="cssServiceChannel">cssServiceChannel</string>
+    <string name="VoiceServiceChannel">VoiceServiceChannel</string>
 </resources>

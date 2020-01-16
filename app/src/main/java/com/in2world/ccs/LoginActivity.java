@@ -16,11 +16,13 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.in2world.ccs.Database.SaveData;
 import com.in2world.ccs.helper.PermissionHelper;
 import com.in2world.ccs.helper.ValidationHelper;
+import com.in2world.ccs.service.SIP_Service;
 import com.in2world.ccs.tools.GlobalData;
 import com.in2world.ccs.ui.CallActivity;
 import com.in2world.ccs.ui.MainActivity;
 import com.in2world.ccs.ui.SipSettingsActivity;
 
+import static com.in2world.ccs.service.SIP_Service.startSIPServices;
 import static com.in2world.ccs.tools.GlobalData.*;
 
 
@@ -75,7 +77,8 @@ public class LoginActivity extends AppCompatActivity {
         if (!checkPermission())
             return;
 
-        RootApplcation.getmRootApplcation().init(this);
+        if (!SIP_Service.isInstanceCreated())
+            startSIPServices(this);
         startActivity(new Intent(this, MainActivity.class));
     }
 
