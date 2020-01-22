@@ -34,7 +34,7 @@ public class SentMessageHolder extends RecyclerView.ViewHolder {
         messageText.setText(message);
 
         // Format the stored timestamp into a readable String using method.
-       // timeText.setText(getTimeStamp(message.getCreatedAt()));
+        timeText.setText(getTimeStamp(System.currentTimeMillis()));
       //  nameText.setText(message.getSender().getNickname());
 
         // Insert the profile image from the URL into the ImageView.

@@ -39,7 +39,7 @@ public class ReceivedMessageHolder extends RecyclerView.ViewHolder {
         messageText.setText(message);
 
         // Format the stored timestamp into a readable String using method.
-    //    timeText.setText(getTimeStamp(message.getCreatedAt()));
+        timeText.setText(getTimeStamp(System.currentTimeMillis()));
   //      nameText.setText(message.getNickname());
 
 
