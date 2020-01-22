@@ -48,8 +48,9 @@ public class ChatActivity extends AppCompatActivity {
     private SocketClient socket;
     public List<String> MessageList ;
     MediaPlayer mPlayer;
-
+    public static String usernmaeW="";
     public static String Nickname ;
+
     private void initView() {
         separator = (View) findViewById(R.id.separator);
         myRecylerView =  findViewById(R.id.messagelist);
@@ -136,18 +137,18 @@ public class ChatActivity extends AppCompatActivity {
 
                     String data = message.username+":"+message.message;
 
-
-                    //MessageList.add(data);
+                    usernmaeW = GlobalData.mProfile.getUsername();
+                    MessageList.add(data);
 
 
                     try {
                         sendMessage(message);
 
 
-                        // playNotificationSound();
-                        // messageListAdapter.notifyDataSetChanged();
-                        // if (messageListAdapter.getItemCount() > 1)
-                        //     myRecylerView.getLayoutManager().smoothScrollToPosition(myRecylerView, null, messageListAdapter.getItemCount() - 1);
+                        playNotificationSound();
+                        messageListAdapter.notifyDataSetChanged();
+                        if (messageListAdapter.getItemCount() > 1)
+                            myRecylerView.getLayoutManager().smoothScrollToPosition(myRecylerView, null, messageListAdapter.getItemCount() - 1);
 
                         messagetxt.setText(" ");
                     } catch (JSONException e) {
@@ -210,9 +211,8 @@ public class ChatActivity extends AppCompatActivity {
                         try {
                             username = data.getString("username");
                             message = data.getString("message");
-
                             String messaged = username+":"+message;
-
+                            usernmaeW = username;
                             MessageList.add(messaged);
                             playNotificationSound();
                             messageListAdapter.notifyDataSetChanged();

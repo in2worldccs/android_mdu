@@ -72,10 +72,8 @@ public class LoginActivity extends AppCompatActivity  implements  WebService.OnR
     }
 
     private void init() {
-
         String recent_token = FirebaseInstanceId.getInstance().getToken();
         Log.w(TAG, "init: recent_token "+recent_token);
-
         if(isToken() && isProfile() && checkMyData()) {
             //startActivity(new Intent(this, MainActivity.class));
             //finish();

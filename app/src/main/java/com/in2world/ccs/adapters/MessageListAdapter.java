@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.in2world.ccs.R;
 import com.in2world.ccs.module.Message;
+import com.in2world.ccs.tools.GlobalData;
+import com.in2world.ccs.ui.ChatActivity;
 
 import java.util.List;
 
@@ -78,9 +80,13 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         Log.d(TAG, "getItemViewType: position "+position);
 
          String message = mMessageList.get(position);
-
-        return VIEW_TYPE_MESSAGE_SENT;
-
+         if (GlobalData.mProfile.getUsername().equals(ChatActivity.usernmaeW)) {
+            // If the current user is the sender of the message
+            return VIEW_TYPE_MESSAGE_SENT;
+        } else {
+            // If some other user sent the message
+            return VIEW_TYPE_MESSAGE_RECEIVED;
+        }
         /*if (message.getSender().getUserId() == VIEW_TYPE_MESSAGE_SENT) {
              // If the current user is the sender of the message
                return VIEW_TYPE_MESSAGE_SENT;
