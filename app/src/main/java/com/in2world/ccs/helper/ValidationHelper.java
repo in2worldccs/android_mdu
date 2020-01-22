@@ -21,7 +21,7 @@ public class ValidationHelper {
         if (string.equals(""))
             return false;
 
-        if (string.length() < 1)
+        if (string.length() == 0)
             return false;
 
         return !string.equals("null");

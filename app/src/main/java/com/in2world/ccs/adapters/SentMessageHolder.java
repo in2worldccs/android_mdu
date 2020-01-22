@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.in2world.ccs.R;
 import com.in2world.ccs.module.Message;
+import com.in2world.ccs.ui.ChatActivity;
 
 import java.text.SimpleDateFormat;
 
@@ -30,12 +31,11 @@ public class SentMessageHolder extends RecyclerView.ViewHolder {
 
     }
 
-    public void bind(String message) {
-        messageText.setText(message);
-
+    public void bind(ChatActivity.TestMessage message) {
+        messageText.setText(message.getMessage());
         // Format the stored timestamp into a readable String using method.
         timeText.setText(getTimeStamp(System.currentTimeMillis()));
-      //  nameText.setText(message.getSender().getNickname());
+        //nameText.setText(message.getUsername());
 
         // Insert the profile image from the URL into the ImageView.
         // Utils.displayRoundImageFromUrl(mContext, message.getSender().getProfileUrl(), profileImage);

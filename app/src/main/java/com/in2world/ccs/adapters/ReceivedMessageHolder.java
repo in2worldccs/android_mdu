@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.in2world.ccs.R;
 import com.in2world.ccs.module.Message;
+import com.in2world.ccs.ui.ChatActivity;
 
 import java.text.SimpleDateFormat;
 
@@ -35,12 +36,12 @@ public class ReceivedMessageHolder extends RecyclerView.ViewHolder {
         timeText = (TextView) itemView.findViewById(R.id.tv_time);
     }
 
-    public void bind(Context context , String message) {
-        messageText.setText(message);
+    public void bind(Context context , ChatActivity.TestMessage message) {
+        messageText.setText(message.getMessage());
 
         // Format the stored timestamp into a readable String using method.
         timeText.setText(getTimeStamp(System.currentTimeMillis()));
-  //      nameText.setText(message.getNickname());
+       // nameText.setText(message.getUsername());
 
 
       /*  if (message.getID() == 1){

@@ -19,6 +19,7 @@ import com.in2world.ccs.Database.SaveData;
 import com.in2world.ccs.LoginActivity;
 import com.in2world.ccs.R;
 import com.in2world.ccs.adapters.MessageListAdapter;
+import com.in2world.ccs.helper.ValidationHelper;
 import com.in2world.ccs.module.Data;
 import com.in2world.ccs.module.Message;
 import com.in2world.ccs.socket.SocketClient;
@@ -36,6 +37,9 @@ import java.util.List;
 
 import io.socket.emitter.Emitter;
 
+import static com.in2world.ccs.adapters.MessageListAdapter.VIEW_TYPE_MESSAGE_RECEIVED;
+import static com.in2world.ccs.adapters.MessageListAdapter.VIEW_TYPE_MESSAGE_SENT;
+
 public class ChatActivity extends AppCompatActivity {
 
     private static final String TAG = "ChatActivity";
@@ -46,7 +50,7 @@ public class ChatActivity extends AppCompatActivity {
     MessageListAdapter messageListAdapter;
     //declare socket object
     private SocketClient socket;
-    public List<String> MessageList ;
+    public List<TestMessage> MessageList ;
     MediaPlayer mPlayer;
     public static String usernmaeW="";
     public static String Nickname ;
@@ -102,8 +106,6 @@ public class ChatActivity extends AppCompatActivity {
                         dataJSON.put("username",GlobalData.mProfile.getUsername());
                         Log.d(TAG, "LogIn: data "+dataJSON.toString());
                         SocketIO.getInstance().getSocket().emit("borad", dataJSON);
-
-
                     }else {
 
                     }
@@ -124,27 +126,17 @@ public class ChatActivity extends AppCompatActivity {
                 //retrieve the nickname and the message content and fire the event messagedetection
 
 
-                if(!messagetxt.getText().toString().isEmpty()){
+                if(ValidationHelper.validString(messagetxt.getText().toString())){
 
                     //  Message message = new Message(Nickname,messagetxt.getText().toString(),1,0,0,""+System.currentTimeMillis());
 
                     //  Data data = new Data("MESSAGE",message);
 
 
-                    TestMessage message = new TestMessage(GlobalData.mProfile.getUsername(),messagetxt.getText().toString());
-
-
-
-                    String data = message.username+":"+message.message;
-
-                    usernmaeW = GlobalData.mProfile.getUsername();
-                    MessageList.add(data);
-
-
                     try {
+                        TestMessage message = new TestMessage(VIEW_TYPE_MESSAGE_SENT,GlobalData.mProfile.getUsername(),messagetxt.getText().toString());
+                        MessageList.add(message);
                         sendMessage(message);
-
-
                         playNotificationSound();
                         messageListAdapter.notifyDataSetChanged();
                         if (messageListAdapter.getItemCount() > 1)
@@ -205,15 +197,18 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         JSONObject data = (JSONObject) args[0];
-                        Log.e(TAG, "run: "+data.toString() );
+                        Log.e(TAG, "run: "+data.toString());
                         String username;
                         String message;
                         try {
                             username = data.getString("username");
                             message = data.getString("message");
-                            String messaged = username+":"+message;
-                            usernmaeW = username;
-                            MessageList.add(messaged);
+
+                            if (GlobalData.mProfile.getUsername().equals(username))
+                                return;
+
+                            TestMessage testMessage = new TestMessage(VIEW_TYPE_MESSAGE_RECEIVED,username,message);
+                            MessageList.add(testMessage);
                             playNotificationSound();
                             messageListAdapter.notifyDataSetChanged();
                             if (messageListAdapter.getItemCount() > 1)
@@ -231,13 +226,40 @@ public class ChatActivity extends AppCompatActivity {
         SocketIO.getInstance().getSocket().on("new_msg",onNewMessage);
     }
 
-    class TestMessage{
+   public class TestMessage{
+        int id ;
         String username = "";
         String message = "";
 
-        public TestMessage(String username, String message) {
+        public TestMessage(int id,String username, String message) {
+            this.id = id;
             this.username = username;
             this.message = message;
         }
-    }
+
+       public int getId() {
+           return id;
+       }
+
+       public void setId(int id) {
+           this.id = id;
+       }
+
+       public String getUsername() {
+           return username;
+       }
+
+       public void setUsername(String username) {
+           this.username = username;
+       }
+
+       public String getMessage() {
+           return message;
+       }
+
+       public void setMessage(String message) {
+           this.message = message;
+       }
+   }
+
 }
