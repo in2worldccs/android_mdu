@@ -8,4 +8,7 @@
     <string name="enter_domain">Enter Domain</string>
     <string name="cssServiceChannel">cssServiceChannel</string>
     <string name="VoiceServiceChannel">VoiceServiceChannel</string>
+    <string name="ok">ok</string>
+    <string name="error_connection">connection error</string>
+    <string name="NO_CONNECTION">Please check your internet connection</string>
 </resources>

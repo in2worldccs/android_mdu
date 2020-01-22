@@ -35,7 +35,7 @@ public class TestActivity extends AppCompatActivity {
     private Handler hdlr = new Handler();
 
     NotificationCompat.Builder builder;
-
+//AlmobrmJ2130611ibrahem
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

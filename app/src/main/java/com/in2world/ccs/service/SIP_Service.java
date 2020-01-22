@@ -418,10 +418,17 @@ public class SIP_Service extends IntentService {
                 SIP_Profile = builder.build();
             }
 
-            SIP_Manager.close(SIP_Profile.getUriString());
-            Log.w(TAG, "closeLocalProfile: Done DoneDoneDoneDone " + SIP_Profile.getUriString());
+            try {
+                SIP_Manager.close(SIP_Profile.getUriString());
+                Log.w(TAG, "closeLocalProfile: Done DoneDoneDoneDone " + SIP_Profile.getUriString());
+
+            }catch (SipException sipException){
+                Log.e(TAG, "SipService is dead and is restarting... "+ sipException.getMessage());
+
+            }
         } catch (Exception ee) {
-            Log.e(TAG, "onDestroy Failed to close local profile.", ee);
+            Log.e(TAG, "onDestroy Failed to close local profile."+ ee.getMessage());
+
         }
     }
 
@@ -443,7 +450,7 @@ public class SIP_Service extends IntentService {
         whenInComingCall();
         CALL_STATUS = IN_COMING;
         NotificationHelper.callNotification(this,incomingCall.getPeerProfile().getUserName()," is Calling","start");
-      //  DialerActivity.receiveCall(this, intent);
+        //  DialerActivity.receiveCall(this, intent);
     }
 
 
@@ -476,7 +483,7 @@ public class SIP_Service extends IntentService {
 
 
 
-        SipAudioCall.Listener listener_incoming = new SipAudioCall.Listener() {
+    SipAudioCall.Listener listener_incoming = new SipAudioCall.Listener() {
         @Override
         public void onRinging(SipAudioCall call, SipProfile caller) {
             Log.d(TAG, "in onRinging: ");
@@ -642,7 +649,7 @@ public class SIP_Service extends IntentService {
             Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
                     + "://" + mContext.getPackageName() + "/raw/notes_of_the_optimistic");
             ringtone = RingtoneManager.getRingtone(mContext, alarmSound);
-           // ringtone.play();
+            // ringtone.play();
         } catch (Exception e) {
             e.printStackTrace();
         }

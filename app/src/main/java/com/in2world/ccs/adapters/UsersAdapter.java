@@ -17,6 +17,7 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.in2world.ccs.R;
+import com.in2world.ccs.ui.ChatActivity;
 import com.in2world.ccs.ui.ChatUsersActivity;
 import com.in2world.ccs.ui.DialerActivity;
 
@@ -65,8 +66,10 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.MyViewHolder
             @Override
             public void onClick(View v) {
 
+                context.startActivity(new Intent(context, ChatActivity.class));
 
-                context.startActivity(new Intent(context, ChatUsersActivity.class));
+
+                //context.startActivity(new Intent(context, ChatUsersActivity.class));
                 Toast.makeText(context, current, Toast.LENGTH_SHORT).show();
             }
         });

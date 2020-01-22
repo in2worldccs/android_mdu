@@ -7,6 +7,7 @@ import android.net.sip.SipProfile;
 
 import com.in2world.ccs.Database.SaveData;
 import com.in2world.ccs.helper.ValidationHelper;
+import com.in2world.ccs.module.User;
 
 public class GlobalData {
 
@@ -46,18 +47,31 @@ public class GlobalData {
     public static Intent IncomingCallIntent = null;
 
 
+
+    public static boolean saveDataSIP(String username , String domain , String password) {
+        if (ValidationHelper.validString(username) &&
+                ValidationHelper.validString(domain) &&
+                ValidationHelper.validString(password))
+            return false;
+
+        domain = domain+"@78.141.219.180";
+
+        SaveData.getInstance().saveString(GlobalData.KEY_SIP_username, username);
+        SaveData.getInstance().saveString(GlobalData.KEY_SIP_domain, domain);
+        SaveData.getInstance().saveString(GlobalData.KEY_SIP_password, password);
+
+        return checkMyData();
+    }
     public static boolean checkMyData() {
 
        // SIP_username = "101";
        // SIP_domain  = "alhassan9.tk";
        // SIP_password = "101";
 
-
         if (ValidationHelper.validString(SIP_username) &&
                 ValidationHelper.validString(SIP_domain) &&
                 ValidationHelper.validString(SIP_password))
             return true;
-
 
         SIP_username = SaveData.getInstance().getString(KEY_SIP_username);
         SIP_domain = SaveData.getInstance().getString(KEY_SIP_domain);
@@ -69,11 +83,7 @@ public class GlobalData {
         if (!ValidationHelper.validString(SIP_domain)) {
             return false;
         }
-        if (!ValidationHelper.validString(SIP_password)) {
-            return false;
-        }
-
-        return true;
+        return ValidationHelper.validString(SIP_password);
     }
 
 
@@ -84,9 +94,9 @@ public class GlobalData {
     public static String TOKEN_KEY = "token";
     public static String TOKEN_VALUE;
     public static String PROFILE_KEY = "PROFILE_KEY";
-    public static String mProfile = "";
+    public static User mProfile = new User();
 
-    public static boolean IS_TOKEN() {
+    public static boolean isToken() {
         if (ValidationHelper.validString(TOKEN_VALUE))
             return true;
 
@@ -95,14 +105,14 @@ public class GlobalData {
         return ValidationHelper.validString(TOKEN_VALUE);
     }
 
-//    public static boolean IS_PROFILE() {
-//        if (ValidationHelper.validObject(mDriver))
-//            return true;
-//
-//        mDriver = SaveData.getInstance().getObject(PROFILE_KEY, Driver.class);
-//
-//        return ValidationHelper.validObject(mDriver);
-//    }
+    public static boolean isProfile() {
+        if (ValidationHelper.validObject(mProfile))
+            return true;
+
+        mProfile = SaveData.getInstance().getObject(PROFILE_KEY, User.class);
+
+        return ValidationHelper.validObject(mProfile);
+    }
 
 
 }

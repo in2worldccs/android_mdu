@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+<!--        <domain includeSubdomains="false">pa.afkar.today</domain>-->
+<!--        <domain includeSubdomains="false">afkar.today</domain>-->
+        <domain includeSubdomains="false">ibrahemayyad.ga</domain>
+        <domain includeSubdomains="false">78.141.219.180:3007</domain>
+    </domain-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

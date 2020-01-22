@@ -53,4 +53,10 @@ dependencies {
     implementation 'com.android.volley:volley:1.1.1'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.android.volley:volley:1.1.1'
+    implementation "org.java-websocket:Java-WebSocket:1.4.0"
+    //implementation 'com.github.nkzawa:socket.io-client:0.6.0'
+    implementation ('io.socket:socket.io-client:1.0.0') {
+        // excluding org.json which is provided by Android
+        exclude group: 'org.json', module: 'json'
+    }
 }

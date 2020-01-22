@@ -26,6 +26,7 @@ import com.in2world.ccs.helper.ValidationHelper;
 import com.in2world.ccs.receiver.IncomingCallReceiver;
 import com.in2world.ccs.service.MyFirebaseMessagingService;
 import com.in2world.ccs.service.SIP_Service;
+import com.in2world.ccs.socket.SocketIO;
 import com.in2world.ccs.tools.GlobalData;
 import com.in2world.ccs.ui.DialerActivity;
 
@@ -59,10 +60,9 @@ public class RootApplcation extends Application {
         Fabric.with(this, new Crashlytics());
         setmRootApplcation(this);
         SaveData.init(this);
-     //   init(this);
+        SocketIO.init();
+        //init(this);
 
-        SIP_Service.stopSIPServices(this);
-        if (!SIP_Service.isInstanceCreated())
             startSIPServices(this);
 
     }
