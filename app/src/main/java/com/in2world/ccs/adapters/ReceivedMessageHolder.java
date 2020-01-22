@@ -44,7 +44,7 @@ public class ReceivedMessageHolder extends RecyclerView.ViewHolder {
         nameText.setText(message.getUsername());
 
 
-      /*  if (message.getID() == 1){
+          /*if (message.getID() == 1){
             if (GlobalData.mParent.getPGender().equals("male")){
                 profileImage.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_manager_m));
             }else {
