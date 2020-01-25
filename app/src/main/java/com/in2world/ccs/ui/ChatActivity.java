@@ -245,7 +245,7 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         JSONObject data = (JSONObject) args[0];
-                        Log.e(TAG, "new_msg_group_chat run: "+data.toString());
+                        Log.e(TAG, "new_msg_user_chat run: "+data.toString());
                     }
                 });
             }
