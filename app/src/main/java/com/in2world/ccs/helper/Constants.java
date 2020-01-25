@@ -3,7 +3,7 @@ package com.in2world.ccs.helper;
 public class Constants {
 
 
-    private final static String SOCKET_PORT = "4006";
+    private final static String SOCKET_PORT = "4007";
     private final static String API_PORT = "3007";
     private final static String DOMAIN_NAME = "ibrahemayyad.ga";
     public final static String DOMAIN_URL = "https://"+DOMAIN_NAME+":"+API_PORT+"/api/v1/";
