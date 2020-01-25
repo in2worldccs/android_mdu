@@ -23,6 +23,7 @@ import com.in2world.ccs.module.Data;
 import com.in2world.ccs.module.Response;
 import com.in2world.ccs.server.WebService;
 import com.in2world.ccs.socket.SocketClient;
+import com.in2world.ccs.socket.SocketIO;
 import com.in2world.ccs.tools.GlobalData;
 import com.in2world.ccs.ui.fragment.GroupsFragment;
 import com.in2world.ccs.ui.fragment.UsersFragment;
@@ -265,4 +266,10 @@ public class MainActivity extends AppCompatActivity implements WebService.OnResp
     }
 
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        SocketIO.getInstance().getSocket().disconnect();
+    }
 }

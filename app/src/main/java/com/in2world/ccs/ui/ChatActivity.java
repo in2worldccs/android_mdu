@@ -65,6 +65,8 @@ public class ChatActivity extends AppCompatActivity {
         mPlayer = MediaPlayer.create(this, R.raw.new_message);
 
         initSocket();
+        new_msg_user_chat();
+        new_msg_group_chat();
         init();
     }
 
@@ -234,7 +236,41 @@ public class ChatActivity extends AppCompatActivity {
         SocketIO.getInstance().getSocket().on("new_msg",onNewMessage);
     }
 
-   public class TestMessage{
+
+    private void new_msg_user_chat() {
+        Emitter.Listener onNewMessage = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject data = (JSONObject) args[0];
+                        Log.e(TAG, "new_msg_group_chat run: "+data.toString());
+                    }
+                });
+            }
+        };
+        SocketIO.getInstance().getSocket().on("new_msg_user_chat",onNewMessage);
+    }
+
+    private void new_msg_group_chat() {
+
+        Emitter.Listener onNewMessage = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject data = (JSONObject) args[0];
+                        Log.e(TAG, "new_msg_group_chat run: "+data.toString());
+                    }
+                });
+            }
+        };
+        SocketIO.getInstance().getSocket().on("new_msg_group_chat",onNewMessage);
+    }
+
+    public class TestMessage{
         int id ;
         String username = "";
         String message = "";

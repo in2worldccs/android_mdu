@@ -313,10 +313,9 @@ public class LoginActivity extends AppCompatActivity  implements  WebService.OnR
     }
 
     private void sendIdToSocket() {
-
         JSONObject dataJSON = new JSONObject();
         try {
-            dataJSON.put("senderID",mProfile.getId());
+        dataJSON.put("senderID",mProfile.getId());
         Log.d(TAG, "LogIn: data "+dataJSON.toString());
         SocketIO.getInstance().getSocket().emit("auth", dataJSON);
         if(isToken() && isProfile() && checkMyData()) {

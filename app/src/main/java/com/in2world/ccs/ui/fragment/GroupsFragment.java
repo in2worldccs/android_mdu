@@ -42,6 +42,9 @@ public class GroupsFragment extends Fragment {
     private void initView(View view) {
         txtGroup = view.findViewById(R.id.txtGroup);
         rvGroup = view.findViewById(R.id.rvGroup);
+        layoutManager = new LinearLayoutManager(activity);
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
+        rvGroup.setLayoutManager(layoutManager);
         txtGroup.setVisibility(View.GONE);
         rvGroup.setVisibility(View.VISIBLE);
         addData();
