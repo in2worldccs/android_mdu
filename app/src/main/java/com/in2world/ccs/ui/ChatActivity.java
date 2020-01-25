@@ -39,6 +39,8 @@ import io.socket.emitter.Emitter;
 
 import static com.in2world.ccs.adapters.MessageListAdapter.VIEW_TYPE_MESSAGE_RECEIVED;
 import static com.in2world.ccs.adapters.MessageListAdapter.VIEW_TYPE_MESSAGE_SENT;
+import static com.in2world.ccs.tools.GlobalData.mGroup;
+import static com.in2world.ccs.tools.GlobalData.mUser;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -156,14 +158,21 @@ public class ChatActivity extends AppCompatActivity {
 
     private void sendMessage(TestMessage data) throws JSONException {
 
-        SaveData.getInstance().saveObject("object",data);
-        String json = SaveData.getInstance().getString("object");
+      //  SaveData.getInstance().saveObject("object",data);
+      //  String json = SaveData.getInstance().getString("object");
+     //   Log.d(TAG, "LogIn: json "+json);
+
         JSONObject dataJSON = new JSONObject();
-        dataJSON.put("username",data.username);
-        dataJSON.put("message",data.message);
-        Log.d(TAG, "LogIn: json "+json);
-        Log.d(TAG, "LogIn: data "+dataJSON.toString());
-        SocketIO.getInstance().getSocket().emit("message", dataJSON);
+        if (GlobalData.ChatStatus == 1) {
+            dataJSON.put("receiverID", mUser.getId());
+            dataJSON.put("message", data.message);
+            SocketIO.getInstance().getSocket().emit("user_chat", dataJSON);
+        }else if (GlobalData.ChatStatus == 2) {
+            dataJSON.put("groupID", mGroup.getId());
+            dataJSON.put("message", data.message);
+            SocketIO.getInstance().getSocket().emit("group_chat", dataJSON);
+        }
+        Log.d(TAG, "sendMessage: dataJSON " + dataJSON.toString());
 
     }
 
@@ -213,7 +222,6 @@ public class ChatActivity extends AppCompatActivity {
                             messageListAdapter.notifyDataSetChanged();
                             if (messageListAdapter.getItemCount() > 1)
                                 myRecylerView.getLayoutManager().smoothScrollToPosition(myRecylerView, null, messageListAdapter.getItemCount() - 1);
-
                         } catch (JSONException e) {
                             return;
                         }

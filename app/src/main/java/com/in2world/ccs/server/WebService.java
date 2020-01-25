@@ -263,6 +263,8 @@ public class WebService {
                 }
                 Log.e(TAG, "onErrorResponse : error " +message);
                 try {
+                    Log.d(TAG, "onErrorResponse: networkResponse "+error.networkResponse.toString());
+                    Log.d(TAG, "onErrorResponse: statusCode "+error.networkResponse.statusCode);
                     mResponse.put(RESPONSE_CODE, error.networkResponse.statusCode);
                 } catch (Exception e) {
                     Log.e(TAG, "onErrorResponse: e "+e.getMessage() );
@@ -382,6 +384,9 @@ public class WebService {
             case CREATED:
                 onResponding.onResponding(mRequestAPI, true, StatusConnection.CREATED, mResponse);
                 break;
+            case NOT_MODIFIED:
+                onResponding.onResponding(mRequestAPI, true, StatusConnection.CREATED, mResponse);
+                break;
             case BAD_REQUEST:
                 onResponding.onResponding(mRequestAPI, false, StatusConnection.BAD_REQUEST, mResponse);
                 break;
@@ -427,6 +432,7 @@ public class WebService {
     public enum StatusConnection {
         SUCCESS,
         CREATED,
+        NOT_MODIFIED,
         BAD_REQUEST,
         UNAUTHORIZED,
         FORBIDDEN,

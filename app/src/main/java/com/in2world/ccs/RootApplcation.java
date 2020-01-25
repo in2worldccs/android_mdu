@@ -60,10 +60,10 @@ public class RootApplcation extends Application {
         Fabric.with(this, new Crashlytics());
         setmRootApplcation(this);
         SaveData.init(this);
-        SocketIO.init();
+        //SocketIO.init();
         //init(this);
 
-            startSIPServices(this);
+           startSIPServices(this);
 
     }
 

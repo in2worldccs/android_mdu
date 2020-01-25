@@ -3,13 +3,10 @@ package com.in2world.ccs.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Vibrator;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,25 +14,25 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.in2world.ccs.R;
+import com.in2world.ccs.module.Group;
 import com.in2world.ccs.module.User;
 import com.in2world.ccs.tools.GlobalData;
 import com.in2world.ccs.ui.ChatActivity;
-import com.in2world.ccs.ui.ChatUsersActivity;
 import com.in2world.ccs.ui.DialerActivity;
 
 import java.util.List;
 
-public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.MyViewHolder> {
+public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHolder> {
 
     private static final String TAG = "AppStatisticsAdabter";
-    private List<User> objectList;
+    private List<Group> objectList;
     private LayoutInflater inflater;
     String password = "";
     Context context;
 
     private final static int FADE_DURATION = 400; // in milliseconds
 
-    public UsersAdapter(Context context, List<User> objectList) {
+    public GroupsAdapter(Context context, List<Group> objectList) {
         inflater = LayoutInflater.from(context);
         this.objectList = objectList;
         this.context = context;
@@ -58,7 +55,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
-        final User current = objectList.get(position);
+        final Group current = objectList.get(position);
         holder.setData(current, position);
         //   setAnimation(holder.itemView, position);
 
@@ -67,11 +64,11 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.MyViewHolder
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onClick(View v) {
-                GlobalData.mUser = current;
-                GlobalData.ChatStatus = 1;
+                GlobalData.mGroup = current;
+                GlobalData.ChatStatus = 2;
                 context.startActivity(new Intent(context, ChatActivity.class));
                 //context.startActivity(new Intent(context, ChatUsersActivity.class));
-                Toast.makeText(context, current.getUsername(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, current.getName(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -94,17 +91,11 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.MyViewHolder
 
         }
 
-        public void setData(final User item, final int position) {
+        public void setData(final Group item, final int position) {
 
-            txtTitle.setText(item.getUsername());
+            txtTitle.setText(item.getName());
+            call.setVisibility(View.GONE);
 
-
-            call.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    DialerActivity.makeCall(context, "8004");
-                }
-            });
 //            call.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View view) {

@@ -7,7 +7,11 @@ import android.net.sip.SipProfile;
 
 import com.in2world.ccs.Database.SaveData;
 import com.in2world.ccs.helper.ValidationHelper;
+import com.in2world.ccs.module.Group;
 import com.in2world.ccs.module.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GlobalData {
 
@@ -95,6 +99,11 @@ public class GlobalData {
     public static String TOKEN_VALUE;
     public static String PROFILE_KEY = "PROFILE_KEY";
     public static User mProfile = new User();
+    public static User mUser= new User();
+    public static int ChatStatus=0;
+    public static Group mGroup= new Group();
+    public static List<User> userList = null;
+    public static List<Group> groupList = null;
 
     public static boolean isToken() {
         if (ValidationHelper.validString(TOKEN_VALUE))

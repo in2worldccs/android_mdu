@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.in2world.ccs.R;
 import com.in2world.ccs.adapters.UsersAdapter;
+import com.in2world.ccs.helper.ValidationHelper;
+import com.in2world.ccs.module.User;
+import com.in2world.ccs.tools.GlobalData;
 import com.in2world.ccs.ui.DialerActivity;
 import com.in2world.ccs.ui.MainActivity;
 
@@ -24,7 +27,7 @@ public class UsersFragment extends Fragment {
     private TextView txtUser;
     private RecyclerView rvUsers;
     UsersAdapter usersAdapter;
-    List<String> listUsers = new ArrayList<>();
+    List<User> listUsers = new ArrayList<>();
     DialerActivity dialerActivity;
     LinearLayoutManager layoutManager;
     MainActivity activity;
@@ -32,11 +35,8 @@ public class UsersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.users_fragment, container, false);
-
         activity = (MainActivity) getActivity();
-
         initView(view);
-
         return view;
     }
 
@@ -48,22 +48,21 @@ public class UsersFragment extends Fragment {
         layoutManager = new LinearLayoutManager(activity);
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         rvUsers.setLayoutManager(layoutManager);
-
         addData();
     }
 
-    private void addData() {
-        listUsers = new ArrayList<>();
-        listUsers.add("101");
-        listUsers.add("102");
-        listUsers.add("103");
-        listUsers.add("104");
-        listUsers.add("8001");
-        listUsers.add("8002");
-        listUsers.add("8003");
-        listUsers.add("8004");
-        listUsers.add("8005");
-        listUsers.add("8006");
+    public void addData() {
+       // listUsers = new ArrayList<>();
+       // listUsers.add("101");
+       // listUsers.add("102");
+       // listUsers.add("103");
+       // listUsers.add("104");
+       // listUsers.add("8001");
+       // listUsers.add("8002");
+       // listUsers.add("8003");
+       // listUsers.add("8004");
+       // listUsers.add("8005");
+       // listUsers.add("8006");
 
 
         /*
@@ -71,14 +70,20 @@ public class UsersFragment extends Fragment {
         *
         * remove my accunt from users
         */
-        for (int i = 0; i < listUsers.size(); i++) {
-            if (listUsers.get(i).equals(SIP_username)) {
-                listUsers.remove(i);
-                break;
-            }
+      // for (int i = 0; i < listUsers.size(); i++) {
+      //     if (listUsers.get(i).equals(SIP_username)) {
+      //         listUsers.remove(i);
+      //         break;
+      //     }
+      // }
+
+        if (!ValidationHelper.validList(GlobalData.userList)){
+            txtUser.setVisibility(View.VISIBLE);
+            rvUsers.setVisibility(View.GONE);
+            return;
         }
 
-        usersAdapter = new UsersAdapter(activity, listUsers);
+        usersAdapter = new UsersAdapter(activity, GlobalData.userList);
         rvUsers.setAdapter(usersAdapter);
 
     }

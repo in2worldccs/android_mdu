@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity  implements  WebService.OnR
         }
 
 
-        if (!SIP_Service.isInstanceCreated())
+       if (!SIP_Service.isInstanceCreated())
             startSIPServices(this);
 
         HashMap<String, String> params = new HashMap<>();
@@ -186,10 +186,93 @@ public class LoginActivity extends AppCompatActivity  implements  WebService.OnR
                                     ,result.getDataResponse().getUser().getPhoneNumberPbx()
                                     ,result.getDataResponse().getUser().getPhoneNumberPbx());
 
-                        if(isToken() && isProfile() && checkMyData()) {
-                            startActivity(new Intent(this, MainActivity.class));
-                            finish();
+                        SocketIO.init();
+                        new WebService(WebService.RequestAPI.USERS,null,this);
+
+                    }
+                } else if (statusConnection == NO_CONNECTION) {
+                    Toast.makeText(this, getResources().getString(R.string.NO_CONNECTION), Toast.LENGTH_SHORT).show();
+
+                } else if (statusConnection == BAD_REQUEST) {
+                    Response result = new Gson().fromJson(Objects.requireNonNull(objectResult.get(RESULT)).toString(), new TypeToken<Response>() {
+                    }.getType());
+                    Log.w(TAG, "onResponding: result " + result.toString());
+
+                    Toast.makeText(this, result.getErrors(), Toast.LENGTH_SHORT).show();
+
+                } else if (statusConnection == UNAUTHORIZED) {
+                    Response result = new Gson().fromJson(Objects.requireNonNull(objectResult.get(RESULT)).toString(), new TypeToken<Response>() {
+                    }.getType());
+                    Log.w(TAG, "onResponding: result " + result.toString());
+
+                    Toast.makeText(this, result.getErrors(), Toast.LENGTH_SHORT).show();
+
+                } else if (statusConnection == VALIDATION_FAILED) {
+                    Response result = new Gson().fromJson(Objects.requireNonNull(objectResult.get(RESULT)).toString(), new TypeToken<Response>() {
+                    }.getType());
+                    Log.w(TAG, "onResponding: result " + result.toString());
+
+                    Toast.makeText(this, result.getErrors(), Toast.LENGTH_SHORT).show();
+
+                } else if (statusConnection == INTERNAL_SERVER_ERROR) {
+                    Toast.makeText(this, "حدث خطأ في الخادم ... جاري الأصلاح LOGIN ", Toast.LENGTH_SHORT).show();
+                }
+            }else   if (requestAPI.equals(WebService.RequestAPI.USERS)) {
+                if (IsSuccess) {
+                    Response result = new Gson().fromJson(Objects.requireNonNull(objectResult.get(RESULT)).toString(), new TypeToken<Response>() {
+                    }.getType());
+                    Log.w(TAG, "onResponding: result " + result.toString());
+                    if (result.getResult() == Response.SUCCESS) {
+
+                        userList = result.getDataResponse().getUserList();
+
+                        if (ValidationHelper.validList(userList)) {
+                            Log.e(TAG, "onResponding: size "+userList.size() );
+                            new WebService(WebService.RequestAPI.GROUPS,null,this);
                         }
+
+                    }
+                } else if (statusConnection == NO_CONNECTION) {
+                    Toast.makeText(this, getResources().getString(R.string.NO_CONNECTION), Toast.LENGTH_SHORT).show();
+
+                } else if (statusConnection == BAD_REQUEST) {
+                    Response result = new Gson().fromJson(Objects.requireNonNull(objectResult.get(RESULT)).toString(), new TypeToken<Response>() {
+                    }.getType());
+                    Log.w(TAG, "onResponding: result " + result.toString());
+
+                    Toast.makeText(this, result.getErrors(), Toast.LENGTH_SHORT).show();
+
+                } else if (statusConnection == UNAUTHORIZED) {
+                    Response result = new Gson().fromJson(Objects.requireNonNull(objectResult.get(RESULT)).toString(), new TypeToken<Response>() {
+                    }.getType());
+                    Log.w(TAG, "onResponding: result " + result.toString());
+
+                    Toast.makeText(this, result.getErrors(), Toast.LENGTH_SHORT).show();
+
+                } else if (statusConnection == VALIDATION_FAILED) {
+                    Response result = new Gson().fromJson(Objects.requireNonNull(objectResult.get(RESULT)).toString(), new TypeToken<Response>() {
+                    }.getType());
+                    Log.w(TAG, "onResponding: result " + result.toString());
+
+                    Toast.makeText(this, result.getErrors(), Toast.LENGTH_SHORT).show();
+
+                } else if (statusConnection == INTERNAL_SERVER_ERROR) {
+                    Toast.makeText(this, "حدث خطأ في الخادم ... جاري الأصلاح LOGIN ", Toast.LENGTH_SHORT).show();
+                }
+            }else if (requestAPI.equals(WebService.RequestAPI.GROUPS)) {
+                if (IsSuccess) {
+                    Response result = new Gson().fromJson(Objects.requireNonNull(objectResult.get(RESULT)).toString(), new TypeToken<Response>() {
+                    }.getType());
+                    Log.w(TAG, "onResponding: result " + result.toString());
+                    if (result.getResult() == Response.SUCCESS) {
+
+                        groupList = result.getDataResponse().getGroupList();
+
+                        if (ValidationHelper.validList(groupList)) {
+                            Log.e(TAG, "onResponding: size "+groupList.size() );
+                            sendIdToSocket();
+                        }
+
                     }
                 } else if (statusConnection == NO_CONNECTION) {
                     Toast.makeText(this, getResources().getString(R.string.NO_CONNECTION), Toast.LENGTH_SHORT).show();
@@ -226,6 +309,22 @@ public class LoginActivity extends AppCompatActivity  implements  WebService.OnR
             Log.d(TAG, "onResponding: Exception " + e.getMessage());
             Log.d(TAG, "onResponding: Exception getLocalizedMessage " + e.getLocalizedMessage());
             MessageHelper.AppDialog(this, R.string.error_connection, e.getMessage());
+        }
+    }
+
+    private void sendIdToSocket() {
+
+        JSONObject dataJSON = new JSONObject();
+        try {
+            dataJSON.put("senderID",mProfile.getId());
+        Log.d(TAG, "LogIn: data "+dataJSON.toString());
+        SocketIO.getInstance().getSocket().emit("auth", dataJSON);
+        if(isToken() && isProfile() && checkMyData()) {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
