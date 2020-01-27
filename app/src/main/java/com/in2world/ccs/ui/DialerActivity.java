@@ -47,6 +47,8 @@ import static com.in2world.ccs.tools.GlobalData.RINGING;
 import static com.in2world.ccs.tools.GlobalData.SIP_Manager;
 import static com.in2world.ccs.tools.GlobalData.CALL_NUMBER;
 import static com.in2world.ccs.tools.GlobalData.SIP_Profile;
+import static com.in2world.ccs.tools.GlobalData.mProfile;
+import static com.in2world.ccs.tools.GlobalData.mUser;
 import static com.in2world.ccs.tools.SipStateCode.CONNECTING;
 import static com.in2world.ccs.tools.SipStateCode.ENDING_CALL;
 import static com.in2world.ccs.tools.SipStateCode.IN_CALL;
@@ -339,7 +341,7 @@ public class DialerActivity extends AppCompatActivity {
             CALL_NUMBER = incomingCall.getPeerProfile().getUserName();
             updateStatus(RINGING);
             if (ValidationHelper.validString(CALL_NUMBER))
-                callName.setText(CALL_NUMBER);
+                callName.setText(mUser.getUsername());
 
     }
 
@@ -403,7 +405,7 @@ public class DialerActivity extends AppCompatActivity {
             public void onResult(Object object, String function, boolean IsSuccess, int RequestStatus, String MessageStatus) {
                 Log.d(TAG, "onResult: IsSuccess " + IsSuccess);
             }
-        }).pushMessage(FCM.SIP_RUN, GlobalData.SIP_username, "123", FCM.token_nokia);
+        }).pushMessage(FCM.SIP_RUN, GlobalData.SIP_username, ""+mProfile.getId(), GlobalData.mUser.getFcmToken());
     }
 
 

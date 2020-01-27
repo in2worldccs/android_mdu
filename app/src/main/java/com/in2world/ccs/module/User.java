@@ -28,6 +28,9 @@ public class User {
     @SerializedName("phone_number_pbx")
     @Expose
     private String phoneNumberPbx;
+    @SerializedName("fcm_token")
+    @Expose
+    private String fcmToken;
 
     public int getId() {
         return id;
@@ -93,4 +96,11 @@ public class User {
         this.phoneNumberPbx = phoneNumberPbx;
     }
 
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
 }

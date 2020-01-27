@@ -45,6 +45,7 @@ import com.in2world.ccs.helper.ValidationHelper;
 import com.in2world.ccs.receiver.IncomingCallReceiver;
 import com.in2world.ccs.server.Result;
 import com.in2world.ccs.server.fcm.FCM;
+import com.in2world.ccs.tools.GlobalData;
 import com.in2world.ccs.tools.SipStateCode;
 import com.in2world.ccs.ui.DialerActivity;
 
@@ -69,6 +70,8 @@ import static com.in2world.ccs.tools.GlobalData.SIP_domain;
 import static com.in2world.ccs.tools.GlobalData.SIP_password;
 import static com.in2world.ccs.tools.GlobalData.SIP_username;
 import static com.in2world.ccs.tools.GlobalData.checkMyData;
+import static com.in2world.ccs.tools.GlobalData.mProfile;
+import static com.in2world.ccs.tools.GlobalData.mUser;
 import static com.in2world.ccs.tools.SipErrorCode.getErrorMessage;
 
 public class SIP_Service extends IntentService {
@@ -342,51 +345,32 @@ public class SIP_Service extends IntentService {
             Intent i = new Intent();
             i.setAction("android.SipDemo.INCOMING_CALL");
             PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, Intent.FILL_IN_DATA);
-           /* SIP_Manager.createSipSession(SIP_Profile, new SipSession.Listener(){
-                @Override
-                public void onError(SipSession session, int errorCode, String errorMessage) {
-                    super.onError(session, errorCode, errorMessage);
-                    Log.d(TAG, "onError: session "+getErrorMessage(errorCode));
-                }
-
-                @Override
-                public void onCallEstablished(SipSession session, String sessionDescription) {
-                    super.onCallEstablished(session, sessionDescription);
-                    Log.d(TAG, "onCallEstablished: session getCallId "+session.getCallId());
-                    Log.d(TAG, "onCallEstablished: session getLocalIp "+session.getLocalIp());
-                }
-
-                @Override
-                public void onCallEnded(SipSession session) {
-                    super.onCallEnded(session);
-                    Log.d(TAG, "onCallEnded: ");
-                    
-                }
-            });*/
+           // SIP_Manager.createSipSession(SIP_Profile,null);
             SIP_Manager.open(SIP_Profile, pi, null);
-
             // This listener must be added AFTER manager.open is called,
             // Otherwise the methods aren't guaranteed to fire.
-
-
+            Log.d(TAG, "initializeLocalProfile: SIP_Profile " + SIP_Profile.getUriString());
             Log.d(TAG, "initializeLocalProfile: manager " + (SIP_Manager != null));
             SIP_Manager.setRegistrationListener(SIP_Profile.getUriString(), new SipRegistrationListener() {
                 public void onRegistering(String localProfileUri) {
                     setSipStatus("Registering with SIP Server..." + localProfileUri);
                     Log.d(TAG, "onRegistering: Registering with SIP Server...");
                 }
-
                 public void onRegistrationDone(String localProfileUri, long expiryTime) {
                     setSipStatus("Ready");
                     Log.d(TAG, "onRegistering: Ready");
 
 
                     Log.d(TAG, "onRegistrationDone: isInstanceCreated " + SIP_Service.isInstanceCreated());
-                    if (SIP_Service.isInstanceCreated()) {
-                        sendToCall(context);
-                    }
-                }
 
+                    if(!ValidationHelper.validObject(mUser)) return;
+                    new FCM(context, new Result() {
+                        @Override
+                        public void onResult(Object object, String function, boolean IsSuccess, int RequestStatus, String MessageStatus) {
+                            Log.d(TAG, "onResult: IsSuccess "+IsSuccess);
+                        }
+                    }).pushMessage(FCM.SIP_READY,mProfile.getUsername(),""+GlobalData.mUser.getId(), GlobalData.mUser.getFcmToken());
+                }
                 public void onRegistrationFailed(String localProfileUri, int errorCode,
                                                  String errorMessage) {
                     Log.w(TAG, "onRegistrationFailed: localProfileUri " + localProfileUri);
@@ -407,27 +391,26 @@ public class SIP_Service extends IntentService {
      */
     public static void closeLocalProfile() {
         Log.d(TAG, "closeLocalProfile: ");
-        if (SIP_Manager == null) {
+        if (SIP_Manager == null)
             return;
-        }
-        Log.d(TAG, "closeLocalProfile: 1");
+
+        Log.d(TAG, "closeLocalProfile: 1SIP_username "+SIP_username);
+        Log.d(TAG, "closeLocalProfile: 1SIP_domain "+SIP_domain);
         try {
             if (SIP_Profile == null) {
                 SipProfile.Builder builder = new SipProfile.Builder(SIP_username, SIP_domain);
                 builder.setPassword(SIP_password);
                 SIP_Profile = builder.build();
             }
-
             try {
+                //SIP_Manager.unregister(SIP_Profile, null);
                 SIP_Manager.close(SIP_Profile.getUriString());
                 Log.w(TAG, "closeLocalProfile: Done DoneDoneDoneDone " + SIP_Profile.getUriString());
-
             }catch (SipException sipException){
                 Log.e(TAG, "SipService is dead and is restarting... "+ sipException.getMessage());
-
             }
         } catch (Exception ee) {
-            Log.e(TAG, "onDestroy Failed to close local profile."+ ee.getMessage());
+            Log.e(TAG, "onDestroy Failed to close local profile "+ ee.getMessage());
 
         }
     }

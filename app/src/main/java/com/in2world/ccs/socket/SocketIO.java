@@ -102,8 +102,6 @@ public class SocketIO {
             opts.callFactory = okHttpClient;
             opts.webSocketFactory = okHttpClient;
             JSONObject dataJSON = new JSONObject();
-            dataJSON.put("auth_token", mUser.getId());
-            dataJSON.put("user_token", TOKEN_VALUE);
             opts.query = "auth_token="+mProfile.getId();
             mSocket = IO.socket(SOCKET_SERVER_URL, opts);
             mSocket.connect();
@@ -113,8 +111,6 @@ public class SocketIO {
             Log.e(TAG, "init: NoSuchAlgorithmException "+ e.getMessage());
         } catch (KeyManagementException e) {
             Log.e(TAG, "init: KeyManagementException "+ e.getMessage());
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
         if (instance == null)
             instance = new SocketIO();
@@ -122,7 +118,6 @@ public class SocketIO {
 
 
     private void listenerAction(String event){
-
 
     }
 }

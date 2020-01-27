@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.sip.SipAudioCall;
 import android.net.sip.SipManager;
 import android.net.sip.SipProfile;
+import android.util.Log;
 
 import com.in2world.ccs.Database.SaveData;
 import com.in2world.ccs.helper.ValidationHelper;
@@ -15,8 +16,7 @@ import java.util.List;
 
 public class GlobalData {
 
-    GlobalData globalData;
-
+    private static final String TAG = "GlobalData";
     public static String KEY_SIP_username = "namePref";
     public static String KEY_SIP_domain = "domainPref";
     public static String KEY_SIP_password = "passPref";
@@ -53,16 +53,20 @@ public class GlobalData {
 
 
     public static boolean saveDataSIP(String username , String domain , String password) {
-        if (ValidationHelper.validString(username) &&
-                ValidationHelper.validString(domain) &&
-                ValidationHelper.validString(password))
+        Log.d(TAG, "saveDataSIP: ");
+
+            if (!ValidationHelper.validString(username) &&
+                !ValidationHelper.validString(domain) &&
+                !ValidationHelper.validString(password))
             return false;
 
-        domain = domain+"@78.141.219.180";
+        SIP_username = username;
+        SIP_domain = "78.141.219.180";
+        SIP_password = password;
 
-        SaveData.getInstance().saveString(GlobalData.KEY_SIP_username, username);
-        SaveData.getInstance().saveString(GlobalData.KEY_SIP_domain, domain);
-        SaveData.getInstance().saveString(GlobalData.KEY_SIP_password, password);
+        SaveData.getInstance().saveString(GlobalData.KEY_SIP_username, SIP_username);
+        SaveData.getInstance().saveString(GlobalData.KEY_SIP_domain, SIP_domain);
+        SaveData.getInstance().saveString(GlobalData.KEY_SIP_password, SIP_password);
 
         return checkMyData();
     }
@@ -80,8 +84,7 @@ public class GlobalData {
         SIP_username = SaveData.getInstance().getString(KEY_SIP_username);
         SIP_domain = SaveData.getInstance().getString(KEY_SIP_domain);
         SIP_password = SaveData.getInstance().getString(KEY_SIP_password);
-
-        if (!ValidationHelper.validString(SIP_username)) {
+          if (!ValidationHelper.validString(SIP_username)) {
             return false;
         }
         if (!ValidationHelper.validString(SIP_domain)) {
@@ -99,7 +102,7 @@ public class GlobalData {
     public static String TOKEN_VALUE;
     public static String PROFILE_KEY = "PROFILE_KEY";
     public static User mProfile = new User();
-    public static User mUser= new User();
+    public static User mUser= null;
     public static int ChatStatus=0;
     public static Group mGroup= new Group();
     public static List<User> userList = null;
@@ -117,9 +120,7 @@ public class GlobalData {
     public static boolean isProfile() {
         if (ValidationHelper.validObject(mProfile))
             return true;
-
         mProfile = SaveData.getInstance().getObject(PROFILE_KEY, User.class);
-
         return ValidationHelper.validObject(mProfile);
     }
 

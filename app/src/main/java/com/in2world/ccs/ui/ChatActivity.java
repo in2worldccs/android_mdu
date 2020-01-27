@@ -40,6 +40,7 @@ import io.socket.emitter.Emitter;
 import static com.in2world.ccs.adapters.MessageListAdapter.VIEW_TYPE_MESSAGE_RECEIVED;
 import static com.in2world.ccs.adapters.MessageListAdapter.VIEW_TYPE_MESSAGE_SENT;
 import static com.in2world.ccs.tools.GlobalData.mGroup;
+import static com.in2world.ccs.tools.GlobalData.mProfile;
 import static com.in2world.ccs.tools.GlobalData.mUser;
 
 public class ChatActivity extends AppCompatActivity {
@@ -64,9 +65,13 @@ public class ChatActivity extends AppCompatActivity {
         send = (Button) findViewById(R.id.send);
         mPlayer = MediaPlayer.create(this, R.raw.new_message);
 
-        initSocket();
-        new_msg_user_chat();
-        new_msg_group_chat();
+        //initSocket();
+        if (GlobalData.ChatStatus == 1) {
+            new_msg_user_chat();
+        }else if (GlobalData.ChatStatus == 2) {
+            new_msg_group_chat();
+        }
+
         init();
     }
 
@@ -166,15 +171,22 @@ public class ChatActivity extends AppCompatActivity {
 
         JSONObject dataJSON = new JSONObject();
         if (GlobalData.ChatStatus == 1) {
+            dataJSON.put("senderID", mProfile.getId());
+            dataJSON.put("senderUsername", mProfile.getUsername());
             dataJSON.put("receiverID", mUser.getId());
+            dataJSON.put("receiverUsername", mUser.getUsername());
             dataJSON.put("message", data.message);
+            Log.w(TAG, "sendMessage: user_chat dataJSON " + dataJSON.toString());
             SocketIO.getInstance().getSocket().emit("user_chat", dataJSON);
         }else if (GlobalData.ChatStatus == 2) {
-            dataJSON.put("groupID", mGroup.getId());
+            dataJSON.put("senderID", mProfile.getId());
+            dataJSON.put("senderUsername", mProfile.getUsername());
+            dataJSON.put("receiverID", mGroup.getId());
+            dataJSON.put("receiver", mGroup.getName());
             dataJSON.put("message", data.message);
+            Log.w(TAG, "sendMessage: group_chat dataJSON " + dataJSON.toString());
             SocketIO.getInstance().getSocket().emit("group_chat", dataJSON);
         }
-        Log.d(TAG, "sendMessage: dataJSON " + dataJSON.toString());
 
     }
 
@@ -238,36 +250,73 @@ public class ChatActivity extends AppCompatActivity {
 
 
     private void new_msg_user_chat() {
-        Emitter.Listener onNewMessage = new Emitter.Listener() {
+        Emitter.Listener userMessage = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         JSONObject data = (JSONObject) args[0];
-                        Log.e(TAG, "new_msg_user_chat run: "+data.toString());
+                        Log.w(TAG, "new_msg_user_chat run: "+data.toString());
+                        try {
+                            String senderID = data.getString("senderID");
+                            String senderUsername = data.getString("senderUsername");
+                            String receiverID = data.getString("receiverID");
+                            String receiverUsername = data.getString("receiverUsername");
+                            String message = data.getString("message");
+                            if (GlobalData.mProfile.getId() == Integer.parseInt(senderID))
+                                return;
+                            TestMessage testMessage = new TestMessage(VIEW_TYPE_MESSAGE_RECEIVED,receiverUsername,message);
+                            MessageList.add(testMessage);
+                            playNotificationSound();
+                            messageListAdapter.notifyDataSetChanged();
+                            if (messageListAdapter.getItemCount() > 1)
+                                myRecylerView.getLayoutManager().smoothScrollToPosition(myRecylerView, null, messageListAdapter.getItemCount() - 1);
+                        } catch (JSONException e) {
+                            Log.e(TAG, "run: e "+e.getMessage());
+                            return;
+                        }
                     }
                 });
             }
         };
-        SocketIO.getInstance().getSocket().on("new_msg_user_chat",onNewMessage);
+        SocketIO.getInstance().getSocket().on("new_msg_user_chat",userMessage);
     }
 
     private void new_msg_group_chat() {
-
-        Emitter.Listener onNewMessage = new Emitter.Listener() {
+        Emitter.Listener groupMessage = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         JSONObject data = (JSONObject) args[0];
-                        Log.e(TAG, "new_msg_group_chat run: "+data.toString());
+                        Log.w(TAG, "new_msg_group_chat run: "+data.toString());
+                        Log.d(TAG, "run: 1");
+                        try {
+                           String senderID = data.getString("senderID");
+                           String senderUsername = data.getString("senderUsername");
+                           String receiverID = data.getString("receiverID");
+                           String receiverUsername = data.getString("receiver");
+                           String message = data.getString("message");
+                            Log.d(TAG, "run: 2");
+                            // if (GlobalData.mProfile.getId() == Integer.parseInt(senderID)) return;
+                            TestMessage testMessage = new TestMessage(VIEW_TYPE_MESSAGE_RECEIVED,senderUsername,message);
+                            Log.d(TAG, "run: 1223");
+                            MessageList.add(testMessage);
+                            playNotificationSound();
+                            Log.d(TAG, "run: 3");
+                            messageListAdapter.notifyDataSetChanged();
+                            if (messageListAdapter.getItemCount() > 1)
+                                myRecylerView.getLayoutManager().smoothScrollToPosition(myRecylerView, null, messageListAdapter.getItemCount() - 1);
+                        } catch (JSONException e) {
+                            Log.d(TAG, "run: e "+e.getMessage());
+                        }
                     }
                 });
             }
         };
-        SocketIO.getInstance().getSocket().on("new_msg_group_chat",onNewMessage);
+        SocketIO.getInstance().getSocket().on("new_msg_group_chat",groupMessage);
     }
 
     public class TestMessage{

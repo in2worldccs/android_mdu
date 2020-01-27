@@ -22,12 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.in2world.ccs.tools.GlobalData.SIP_username;
+import static com.in2world.ccs.tools.GlobalData.mProfile;
 
 public class UsersFragment extends Fragment {
     private TextView txtUser;
     private RecyclerView rvUsers;
     UsersAdapter usersAdapter;
-    List<User> listUsers = new ArrayList<>();
     DialerActivity dialerActivity;
     LinearLayoutManager layoutManager;
     MainActivity activity;
@@ -76,7 +76,12 @@ public class UsersFragment extends Fragment {
       //         break;
       //     }
       // }
-
+        for (int i = 0; i < GlobalData.userList.size(); i++) {
+            if (GlobalData.userList.get(i).getId() == mProfile.getId()) {
+                GlobalData.userList.remove(i);
+                break;
+            }
+        }
         if (!ValidationHelper.validList(GlobalData.userList)){
             txtUser.setVisibility(View.VISIBLE);
             rvUsers.setVisibility(View.GONE);

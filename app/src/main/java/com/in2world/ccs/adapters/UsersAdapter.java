@@ -102,7 +102,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.MyViewHolder
             call.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    DialerActivity.makeCall(context, "8004");
+                    GlobalData.mUser = item;
+                    DialerActivity.makeCall(context, GlobalData.mUser.getPhoneNumberPbx());
                 }
             });
 //            call.setOnClickListener(new View.OnClickListener() {

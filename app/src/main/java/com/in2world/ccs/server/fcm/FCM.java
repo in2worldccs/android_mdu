@@ -13,6 +13,7 @@ import com.android.volley.toolbox.Volley;
 import com.in2world.ccs.RootApplcation;
 import com.in2world.ccs.server.Result;
 import com.in2world.ccs.service.SIP_Service;
+import com.in2world.ccs.tools.GlobalData;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,10 +31,8 @@ public class FCM {
     public static final String FCM_DATA = "data";
 
     public static String Server_key = "AAAAcAzvFC8:APA91bFM6RhxN4iAEnFqkz3ONbCKqdDGV6Uo5KbDOhlzQILFaLkyqS5qQGB6JRsnNYLq2gjiKwDkD3Vy46Igz_H2hLfg5Owbxn1qR6uJlEgMhgHjGLq_qFRa8f6cZTzA6OM5qtxOd7me";
-    public static String token_nokia1 = "e4w6buA2_s4:APA91bFHY3snl4AuwKcJxnDimOzgFV1w37MEeYMirTl3vTKH5ShASqKRUNHY0aSXd4ZL_O62-16FwWyL1_gpVeZWWqRsiDYlvPvBjzAKeLPPQ0BocM8JtjImOMXUcfLo2s--nIR9vFPF";
-    public static String token_nokia = "dYrxJEK83tE:APA91bGTjfdIBuHNJjECSfNYwT_wOPsykFjrWBRbiloqjLkbuoFshT9AXU7-CAgsfOCWFhuS2RbkIurdgSCdRD0eRLB81Yxn-SrEeVITrZelRJfmFViCIMcSTIi_UOa9AI8rR_JIq3HX";
-    public static String token_samsung = "cQsu7VuSQ7g:APA91bEf4l500DsP-jKZaTGAFVf6gm8XYIsQL3ddbR_zJnGUm_MrnD3PakG5MZ5wcvKTgF49w-n-7HBZAR6UZOcaR7LtxW1HOgThKhWQ38pDJKxukVvNaKbewbZ6fgIXPiBiS2BFijXA";
-    public static String token_nokia3 = "eFER3h2BJKw:APA91bG5jKmdHBMBh1tbXo2l7K-3cA4miFbLkCB7UauhLWhBWznzx8YmHwPDYcZX9LEcc9kDwYR40N-8emTNd4cHFioIW5pb6bYHSrt6fiE_VJ2tCM7wW0cRmZ9usgnIto7ggD0Na5cY";
+    public static String token_sender = "";
+    public static String token_resever = "";
     private Context context;
     private Result Result;
 
@@ -53,7 +52,7 @@ public class FCM {
             dataJSON.put(FCM_DATA, data);
 
             notification_data.put("data", dataJSON);
-            notification_data.put("to", token_samsung);
+            notification_data.put("to", token);
 
             Log.d(TAG, "pushMessage: data "+notification_data.toString());
         } catch (JSONException e) {
@@ -96,7 +95,7 @@ public class FCM {
             public void onResult(Object object, String function, boolean IsSuccess, int RequestStatus, String MessageStatus) {
                 Log.d(TAG, "onResult: IsSuccess "+IsSuccess);
             }
-        }).pushMessage(FCM.SIP_READY,"213","13123",FCM.token_samsung);
+        }).pushMessage(FCM.SIP_READY,"213","13123", GlobalData.mUser.getFcmToken());
 
     }
 
