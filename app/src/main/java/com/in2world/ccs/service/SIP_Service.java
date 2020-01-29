@@ -457,7 +457,7 @@ public class SIP_Service extends IntentService {
             Log.d(TAG, "whenOutComingCall: peer "+CALL_NUMBER + "@" + SIP_domain);
             outcomingCall = SIP_Manager.makeAudioCall(SIP_Profile.getUriString(), CALL_NUMBER + "@" + SIP_domain, listener_outcoming, 30);
         } catch (SipException e) {
-            Log.e(TAG, "whenOutComingCall: outcomingCall" + e.getMessage());
+            Log.e(TAG, "whenOutComingCall: outcomingCall " + e.getMessage());
             e.printStackTrace();
         }
 
