@@ -68,7 +68,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
                 GlobalData.ChatStatus = 2;
                 context.startActivity(new Intent(context, ChatActivity.class));
                 //context.startActivity(new Intent(context, ChatUsersActivity.class));
-                Toast.makeText(context, current.getName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, current.getGroupName(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -93,7 +93,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
         public void setData(final Group item, final int position) {
 
-            txtTitle.setText(item.getName());
+            txtTitle.setText(item.getGroupName());
             call.setVisibility(View.GONE);
 
 //            call.setOnClickListener(new View.OnClickListener() {

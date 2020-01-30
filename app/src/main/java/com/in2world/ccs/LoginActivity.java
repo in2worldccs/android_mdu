@@ -275,8 +275,10 @@ public class LoginActivity extends AppCompatActivity  implements  WebService.OnR
                     if (result.getResult() == Response.SUCCESS) {
                         userList = result.getDataResponse().getUserList();
                         if (ValidationHelper.validList(userList)) {
-                            Log.e(TAG, "onResponding: size "+userList.size() );
-                            new WebService(WebService.RequestAPI.GROUPS,null,this);
+                            Log.e(TAG, "onResponding: size "+userList.size());
+                            HashMap<String, String> params = new HashMap<>();
+                            params.put(USER_ID,""+mProfile.getId());
+                            new WebService(WebService.RequestAPI.GROUPS_USER,params,this);
                         }
                     }
                 } else if (statusConnection == NO_CONNECTION) {
@@ -301,13 +303,13 @@ public class LoginActivity extends AppCompatActivity  implements  WebService.OnR
                 } else if (statusConnection == INTERNAL_SERVER_ERROR) {
                     Toast.makeText(this, "حدث خطأ في الخادم ... جاري الأصلاح USERS ", Toast.LENGTH_SHORT).show();
                 }
-            }else if (requestAPI.equals(WebService.RequestAPI.GROUPS)) {
+            }else if (requestAPI.equals(WebService.RequestAPI.GROUPS_USER)) {
                 if (IsSuccess) {
                     Response result = new Gson().fromJson(Objects.requireNonNull(objectResult.get(RESULT)).toString(), new TypeToken<Response>() {
                     }.getType());
                     Log.w(TAG, "onResponding: result " + ObjectUtils.deserializeObjectToString(result));
                     if (result.getResult() == Response.SUCCESS) {
-                        groupList = result.getDataResponse().getGroupList();
+                        groupList = result.getDataResponse().getGroupUserList();
                         if (ValidationHelper.validList(groupList)) {
                             Log.e(TAG, "onResponding: size "+groupList.size() );
                             sendIdToSocket();
@@ -339,8 +341,6 @@ public class LoginActivity extends AppCompatActivity  implements  WebService.OnR
                     Toast.makeText(this, "حدث خطأ في الخادم ... جاري الأصلاح GROUPS ", Toast.LENGTH_SHORT).show();
                 }
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
             Log.d(TAG, "onResponding: Exception " + e.getMessage());

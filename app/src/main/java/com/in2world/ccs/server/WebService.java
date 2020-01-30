@@ -75,8 +75,10 @@ public class WebService {
         GROUPS(DOMAIN_URL + "groups", Request.Method.GET),
         GROUP(DOMAIN_URL + "group", Request.Method.GET),
         GROUP_CREATE(DOMAIN_URL + "groups", Request.Method.POST),
-        GROUP_UPDATE(DOMAIN_URL + "group_update", Request.Method.PUT);
+        GROUP_UPDATE(DOMAIN_URL + "group_update", Request.Method.PUT),
 
+        //Groups Users
+        GROUPS_USER(DOMAIN_URL + "group-users/groups/", Request.Method.GET);
 
         private String value;
         private int requestMethod;
@@ -352,6 +354,12 @@ public class WebService {
                 return;
             stringBuilder.append(DOMAIN_URL+"groups/");
             stringBuilder.append(mRequest.get(GROUP_ID));
+            mRequestAPI.setValue(stringBuilder.toString());
+        }if (mRequestAPI.getValue().equals(RequestAPI.GROUPS_USER.getValue())) {
+            if (!mRequest.containsKey(USER_ID))
+                return;
+            stringBuilder.append(DOMAIN_URL+"group-users/groups/");
+            stringBuilder.append(mRequest.get(USER_ID));
             mRequestAPI.setValue(stringBuilder.toString());
         }
         Log.d(TAG, "handlerUrl: mURL "+stringBuilder.toString());

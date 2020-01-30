@@ -24,6 +24,9 @@ public class DataResponse {
     @SerializedName("groups")
     @Expose
     private List<Group> groupList;
+    @SerializedName("groups_user")
+    @Expose
+    private List<Group> groupUserList;
 
     public User getUser() {
         return ValidationHelper.validObject(user) ? user : new User();
@@ -63,5 +66,13 @@ public class DataResponse {
 
     public void setGroupList(List<Group> groupList) {
         this.groupList = groupList;
+    }
+
+    public List<Group> getGroupUserList() {
+        return ValidationHelper.validList(groupUserList) ? groupUserList : new ArrayList<Group>();
+    }
+
+    public void setGroupUserList(List<Group> groupUserList) {
+        this.groupUserList = groupUserList;
     }
 }

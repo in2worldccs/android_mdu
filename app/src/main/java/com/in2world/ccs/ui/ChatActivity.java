@@ -181,8 +181,8 @@ public class ChatActivity extends AppCompatActivity {
         }else if (GlobalData.ChatStatus == 2) {
             dataJSON.put("senderID", mProfile.getId());
             dataJSON.put("senderUsername", mProfile.getUsername());
-            dataJSON.put("receiverID", mGroup.getId());
-            dataJSON.put("receiver", mGroup.getName());
+            dataJSON.put("receiverID", mGroup.getGroupId());
+            dataJSON.put("receiver", mGroup.getGroupName());
             dataJSON.put("message", data.message);
             Log.w(TAG, "sendMessage: group_chat dataJSON " + dataJSON.toString());
             SocketIO.getInstance().getSocket().emit("group_chat", dataJSON);
@@ -303,8 +303,8 @@ public class ChatActivity extends AppCompatActivity {
                            String receiverUsername = data.getString("receiver");
                            String message = data.getString("message");
 
-                            Log.d(TAG, "run: Id "+mGroup.getId());
-                           // if(!receiverID.equals(mGroup.getId())) return;
+                            Log.d(TAG, "run: Id "+mGroup.getGroupId());
+                           if(!receiverID.equals(mGroup.getGroupId())) return;
 
                             Log.d(TAG, "run: 2");
                             // if (GlobalData.mProfile.getId() == Integer.parseInt(senderID)) return;

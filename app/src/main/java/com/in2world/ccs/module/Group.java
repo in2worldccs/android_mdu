@@ -8,18 +8,19 @@ public class Group {
     @SerializedName("id")
     @Expose
     private Integer id;
-    @SerializedName("name")
+    @SerializedName("group_id")
     @Expose
-    private String name;
-    @SerializedName("description")
+    private String groupId;
+    @SerializedName("group_name")
     @Expose
-    private String description;
-    @SerializedName("created_by")
+    private String groupName;
+    @SerializedName("user_id")
     @Expose
-    private Object createdBy;
-    @SerializedName("group_leader")
+    private String userId;
+    @SerializedName("user_name")
     @Expose
-    private Object groupLeader;
+    private String userName;
+
 
     public Integer getId() {
         return id;
@@ -29,37 +30,35 @@ public class Group {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getGroupId() {
+        return groupId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
-    public String getDescription() {
-        return description;
+    public String getGroupName() {
+        return groupName;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
-    public Object getCreatedBy() {
-        return createdBy;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setCreatedBy(Object createdBy) {
-        this.createdBy = createdBy;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public Object getGroupLeader() {
-        return groupLeader;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setGroupLeader(Object groupLeader) {
-        this.groupLeader = groupLeader;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
-
-
 }
