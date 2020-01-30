@@ -265,11 +265,10 @@ public class ChatActivity extends AppCompatActivity {
                             String receiverUsername = data.getString("receiverUsername");
                             String message = data.getString("message");
 
-                            if(!receiverID.equals(mGroup.getId())) return;
 
                             if (GlobalData.mProfile.getId() == Integer.parseInt(senderID))
                                 return;
-                            TestMessage testMessage = new TestMessage(VIEW_TYPE_MESSAGE_RECEIVED,receiverUsername,message);
+                            TestMessage testMessage = new TestMessage(VIEW_TYPE_MESSAGE_RECEIVED,senderUsername,message);
                             MessageList.add(testMessage);
                             playNotificationSound();
                             messageListAdapter.notifyDataSetChanged();
@@ -287,6 +286,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void new_msg_group_chat() {
+        Log.d(TAG, "new_msg_group_chat: ");
         Emitter.Listener groupMessage = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
@@ -302,6 +302,10 @@ public class ChatActivity extends AppCompatActivity {
                            String receiverID = data.getString("receiverID");
                            String receiverUsername = data.getString("receiver");
                            String message = data.getString("message");
+
+                            Log.d(TAG, "run: Id "+mGroup.getId());
+                           // if(!receiverID.equals(mGroup.getId())) return;
+
                             Log.d(TAG, "run: 2");
                             // if (GlobalData.mProfile.getId() == Integer.parseInt(senderID)) return;
                             TestMessage testMessage = new TestMessage(VIEW_TYPE_MESSAGE_RECEIVED,senderUsername,message);
