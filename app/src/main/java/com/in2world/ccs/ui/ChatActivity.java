@@ -264,6 +264,9 @@ public class ChatActivity extends AppCompatActivity {
                             String receiverID = data.getString("receiverID");
                             String receiverUsername = data.getString("receiverUsername");
                             String message = data.getString("message");
+
+                            if(!receiverID.equals(mGroup.getId())) return;
+
                             if (GlobalData.mProfile.getId() == Integer.parseInt(senderID))
                                 return;
                             TestMessage testMessage = new TestMessage(VIEW_TYPE_MESSAGE_RECEIVED,receiverUsername,message);
