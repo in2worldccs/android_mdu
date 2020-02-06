@@ -5,7 +5,8 @@ public class Constants {
 
     private final static String SOCKET_PORT = "3007";
     private final static String API_PORT = "3007";
-    private final static String DOMAIN_NAME = "ibrahemayyad.ga";
+    //private final static String DOMAIN_NAME = "ibrahemayyad.ga";
+    private final static String DOMAIN_NAME = "swifthelp.org";
     public final static String DOMAIN_URL = "https://"+DOMAIN_NAME+":"+API_PORT+"/api/v1/";
     public final static String SOCKET_SERVER_URL = "https://"+DOMAIN_NAME+":"+SOCKET_PORT;
     public final static String USER_ID = "user_id";

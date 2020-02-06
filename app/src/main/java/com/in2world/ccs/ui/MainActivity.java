@@ -15,6 +15,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.in2world.ccs.Database.SaveData;
+import com.in2world.ccs.LoginActivity;
 import com.in2world.ccs.R;
 import com.in2world.ccs.helper.MessageHelper;
 import com.in2world.ccs.helper.ValidationHelper;
@@ -70,11 +71,22 @@ public class MainActivity extends AppCompatActivity implements WebService.OnResp
         initSocket();
         init();
     }
+    private static MainActivity instance = null;
+
+    public static boolean isInstanceCreated() {
+        return instance != null;
+    }//met
+
+    public static MainActivity getInstance() {
+        return instance;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        instance=this;
         initView();
     }
 
@@ -265,11 +277,13 @@ public class MainActivity extends AppCompatActivity implements WebService.OnResp
 
     }
 
-
+    public void showMessage(String msg){
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        instance=null;
         SocketIO.getInstance().getSocket().disconnect();
     }
 }

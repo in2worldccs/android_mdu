@@ -14,6 +14,8 @@ import com.in2world.ccs.module.User;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.in2world.ccs.service.SIP_Service.closeLocalProfile;
+
 public class GlobalData {
 
     private static final String TAG = "GlobalData";
@@ -55,13 +57,19 @@ public class GlobalData {
     public static boolean saveDataSIP(String username , String domain , String password) {
         Log.d(TAG, "saveDataSIP: ");
 
-            if (!ValidationHelper.validString(username) &&
+        if (ValidationHelper.validString(SIP_username) &&
+                ValidationHelper.validString(SIP_domain) &&
+                ValidationHelper.validString(SIP_password)) {
+            closeLocalProfile(SIP_username,SIP_domain,SIP_password);
+        }
+        if (!ValidationHelper.validString(username) &&
                 !ValidationHelper.validString(domain) &&
                 !ValidationHelper.validString(password))
             return false;
 
         SIP_username = username;
-        SIP_domain = "78.141.219.180";
+        // SIP_domain = "78.141.219.180";
+        SIP_domain = "swifthelp.org";
         SIP_password = password;
 
         SaveData.getInstance().saveString(GlobalData.KEY_SIP_username, SIP_username);
@@ -72,9 +80,9 @@ public class GlobalData {
     }
     public static boolean checkMyData() {
 
-       // SIP_username = "101";
-       // SIP_domain  = "alhassan9.tk";
-       // SIP_password = "101";
+        // SIP_username = "101";
+        // SIP_domain  = "alhassan9.tk";
+        // SIP_password = "101";
 
         if (ValidationHelper.validString(SIP_username) &&
                 ValidationHelper.validString(SIP_domain) &&
@@ -84,7 +92,7 @@ public class GlobalData {
         SIP_username = SaveData.getInstance().getString(KEY_SIP_username);
         SIP_domain = SaveData.getInstance().getString(KEY_SIP_domain);
         SIP_password = SaveData.getInstance().getString(KEY_SIP_password);
-          if (!ValidationHelper.validString(SIP_username)) {
+        if (!ValidationHelper.validString(SIP_username)) {
             return false;
         }
         if (!ValidationHelper.validString(SIP_domain)) {

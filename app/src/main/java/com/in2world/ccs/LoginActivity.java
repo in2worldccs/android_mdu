@@ -27,6 +27,7 @@ import com.in2world.ccs.service.SIP_Service;
 import com.in2world.ccs.socket.SocketIO;
 import com.in2world.ccs.tools.GlobalData;
 import com.in2world.ccs.ui.CallActivity;
+import com.in2world.ccs.ui.DialerActivity;
 import com.in2world.ccs.ui.MainActivity;
 import com.in2world.ccs.ui.SipSettingsActivity;
 
@@ -64,13 +65,22 @@ public class LoginActivity extends AppCompatActivity  implements  WebService.OnR
         init();
     }
 
+    private static LoginActivity instance = null;
+
+    public static boolean isInstanceCreated() {
+        return instance != null;
+    }//met
+
+    public static LoginActivity getInstance() {
+        return instance;
+    }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        instance= this;
         initView();
     }
 
@@ -91,62 +101,44 @@ public class LoginActivity extends AppCompatActivity  implements  WebService.OnR
     }
 
     public void LogIn() {
-
-
-
         name = editName.getText().toString();
         password = editPass.getText().toString();
-
-
         if (!validate())
             return;
-
-
         if (!checkPermission())
             return;
-
-
-
         // if (!checkMyData()) {
         //     updatePreferences();
         //     return;
         // }
-
-
         HashMap<String, String> params = new HashMap<>();
         params.put("username",name);
         params.put("password",password);
         Toast.makeText(LoginActivity.this, "waiting...", Toast.LENGTH_SHORT).show();
         new WebService(WebService.RequestAPI.LOGIN,params,this);
-
     }
 
     public void updatePreferences() {
         Toast.makeText(this, "enter your data", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, SipSettingsActivity.class));
-
     }
 
 
 
     public boolean validate() {
-
         if (!ValidationHelper.validString(name)) {
             editName.setError(getResources().getString(R.string.enter_name));
             return false;
         }
-
         if (!ValidationHelper.validString(password)) {
             editPass.setError(getResources().getString(R.string.enter_password));
             return false;
         }
-
         return true;
     }
 
 
     private boolean checkPermission() {
-
         if (!PermissionHelper.isPermissionGranted(this, PermissionHelper.PERMISSION_RECORD_AUDIO)
                 && !PermissionHelper.isPermissionGranted(this, PermissionHelper.PERMISSION_RECORD_AUDIO))
             return true;
@@ -174,6 +166,12 @@ public class LoginActivity extends AppCompatActivity  implements  WebService.OnR
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        instance= null;
+    }
+
+    @Override
     public void onResponding(WebService.RequestAPI requestAPI, boolean IsSuccess, WebService.StatusConnection statusConnection, HashMap<String, Object> objectResult) {
         Log.w(TAG, "onResponding: requestAPI " + requestAPI.toString());
         Log.w(TAG, "onResponding: statusConnection " + statusConnection);
@@ -188,6 +186,7 @@ public class LoginActivity extends AppCompatActivity  implements  WebService.OnR
                         TOKEN_VALUE = result.getDataResponse().getToken();
                         SaveData.getInstance().saveString(TOKEN_KEY, TOKEN_VALUE);
                         mProfile = result.getDataResponse().getUser();
+
                         Log.d(TAG, "sendIdToSocket: saveDataSIP "+saveDataSIP(mProfile.getPhoneNumberPbx()
                                 ,mProfile.getPhoneNumberPbx()
                                 ,mProfile.getPhoneNumberPbx()));
@@ -375,5 +374,9 @@ public class LoginActivity extends AppCompatActivity  implements  WebService.OnR
             this.username = username;
             this.message = message;
         }
+    }
+
+    public void showMessage(String msg){
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 }

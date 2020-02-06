@@ -36,6 +36,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.in2world.ccs.LoginActivity;
 import com.in2world.ccs.R;
 import com.in2world.ccs.RootApplcation;
 import com.in2world.ccs.helper.Config;
@@ -48,6 +49,7 @@ import com.in2world.ccs.server.fcm.FCM;
 import com.in2world.ccs.tools.GlobalData;
 import com.in2world.ccs.tools.SipStateCode;
 import com.in2world.ccs.ui.DialerActivity;
+import com.in2world.ccs.ui.MainActivity;
 
 import java.text.ParseException;
 import java.util.Timer;
@@ -374,6 +376,12 @@ public class SIP_Service extends IntentService {
                 public void onRegistrationFailed(String localProfileUri, int errorCode,
                                                  String errorMessage) {
                     Log.w(TAG, "onRegistrationFailed: localProfileUri " + localProfileUri);
+
+                    if(LoginActivity.isInstanceCreated()){
+                        LoginActivity.getInstance().showMessage(getErrorMessage(errorCode));
+                    }else if(MainActivity.isInstanceCreated()){
+                        MainActivity.getInstance().showMessage(getErrorMessage(errorCode));
+                    }
                     Log.w(TAG, "onRegistrationFailed: errorCode " + getErrorMessage(errorCode));
                     Log.w(TAG, "onRegistrationFailed: errorMessage " + errorMessage);
                     setSipStatus("Error , " + getErrorMessage(errorCode));
@@ -415,7 +423,31 @@ public class SIP_Service extends IntentService {
         }
     }
 
+    public static void closeLocalProfile(String username,String domain,String password) {
+        Log.d(TAG, "closeLocalProfile: ");
+        if (SIP_Manager == null)
+            return;
 
+        Log.d(TAG, "closeLocalProfile: 1SIP_username "+username);
+        Log.d(TAG, "closeLocalProfile: 1SIP_domain "+domain);
+        try {
+            if (SIP_Profile == null) {
+                SipProfile.Builder builder = new SipProfile.Builder(username, domain);
+                builder.setPassword(password);
+                SIP_Profile = builder.build();
+            }
+            try {
+                //SIP_Manager.unregister(SIP_Profile, null);
+                SIP_Manager.close(SIP_Profile.getUriString());
+                Log.w(TAG, "closeLocalProfile: Done DoneDoneDoneDone " + SIP_Profile.getUriString());
+            }catch (SipException sipException){
+                Log.e(TAG, "SipService is dead and is restarting... "+ sipException.getMessage());
+            }
+        } catch (Exception ee) {
+            Log.e(TAG, "onDestroy Failed to close local profile "+ ee.getMessage());
+
+        }
+    }
     private void registerReceiver(Context context) {
         Log.d(TAG, "registerReceiver: ");
         //isRegisterReceiver(context);
